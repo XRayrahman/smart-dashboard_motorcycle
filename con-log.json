@@ -1,0 +1,9 @@
+{
+    "connection" : {
+        "wifiID" : "", 
+        "password" : ""
+    }, 
+    "address" : {
+        "tujuan" : "pasar turi"
+    }
+}
