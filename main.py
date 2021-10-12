@@ -51,7 +51,9 @@ from kivy.properties import (
 
 class MyLayout(Screen):
 
-    def estimasi(self):
+    def estimasi(self, userinput, SOC_value):
+        #as_been_called = False
+        lay = MyLayout()
         #path_to_kv_file = "test.kv"
         
         #alamat = pd.read_csv('data.csv')
@@ -82,8 +84,8 @@ class MyLayout(Screen):
         #actual_distance = []
 
         #conn = http.client.HTTPSConnection("www.googleapis.com")
-        userinput= "pasar turi"
-        userinput = self.ids.tujuan.text
+        #userinput= "pasar turi"
+        #userinput = self.ids.tujuan.text
         destinationinput = urllib.parse.quote(userinput)
         print(destinationinput)
 
@@ -108,14 +110,14 @@ class MyLayout(Screen):
             #print(DestinationJSON)
             print(response.text)
             responseJSON = json.loads(response.text)
-            self.geolat_destination = responseJSON['candidates'][0]['geometry']['location']['lat']
-            self.geolng_destination = responseJSON['candidates'][0]['geometry']['location']['lng']
+            geolat_destination = responseJSON['candidates'][0]['geometry']['location']['lat']
+            geolng_destination = responseJSON['candidates'][0]['geometry']['location']['lng']
             placeid_destination = responseJSON['candidates'][0]['place_id']
-            self.str_geolat_destination = str(self.geolat_destination)
-            self.str_geolng_destination = str(self.geolng_destination)
+            self.str_geolat_destination = str(geolat_destination)
+            self.str_geolng_destination = str(geolng_destination)
             print(placeid_destination)
-        except Exception:
-            print('INVALID REQUEST DESTINATION')
+        except Exception as e:
+            print('INVALID REQUEST DESTINATION',str(e))
         #geo_destination = str_geolat_destination+","+str_geolng_destination
         #self.ids.button_estimasi.on_release = self.ids.mapview.center_on(geo_destination)
         #self.ids.mapview.center_on.lat = geolat_destination
@@ -124,36 +126,43 @@ class MyLayout(Screen):
         
         #now = datetime.now()
         #departureTime?
+        #try:
+        Distancematrix_URL = "https://maps.googleapis.com/maps/api/distancematrix/json?mode=driving&key="+API_key+"&destinations=place_id:"+placeid_destination+"&origins=sukolilo&key=AIzaSyCFIna2ndU8cxZRJN0FfH9KqvlOSvDzTDw"
+        #-- Parameter Tambahan --
+        #&units=metric&traffic_model=pessimistic
+        #------------------------
+        payload={}
+        headers = {}
+        distanceresp = requests.request("GET", Distancematrix_URL, headers=headers, data=payload)
+        #distanceresp = gmaps.distance_matrix(origin, placeid_destination, mode='driving') ["rows"][0]["elements"][0]["distance"]["value"]
+        #print(DestinationJSON)
+        print(distanceresp.text)
+        
         try:
-            Distancematrix_URL = "https://maps.googleapis.com/maps/api/distancematrix/json?mode=driving&key="+API_key+"&destinations=place_id:"+placeid_destination+"&origins=sukolilo&key=AIzaSyCFIna2ndU8cxZRJN0FfH9KqvlOSvDzTDw"
-            #-- Parameter Tambahan --
-            #&units=metric&traffic_model=pessimistic
-            #------------------------
-            payload={}
-            headers = {}
-            distanceresp = requests.request("GET", Distancematrix_URL, headers=headers, data=payload)
-            #distanceresp = gmaps.distance_matrix(origin, placeid_destination, mode='driving') ["rows"][0]["elements"][0]["distance"]["value"]
-            #print(DestinationJSON)
-            print(distanceresp.text)
             distanceJSON = json.loads(distanceresp.text)
-
             Tdistance = distanceJSON['rows'][0]['elements'][0]['distance']['value']
             Ddistance = distanceJSON['rows'][0]['elements'][0]['distance']['text']
             DtimeEst = distanceJSON['rows'][0]['elements'][0]['duration']['text']
-            self.ids.DummyDistance.text = Ddistance
-            self.ids.DummyTimeEst.text = DtimeEst
+            lay.ids.DummyDistance.text = Ddistance
+            lay.ids.DummyTimeEst.text = DtimeEst
             TrueDistance = Tdistance/1000
             print(TrueDistance)
-        except Exception:
-            print('INVALID REQUEST DISTANCE')
+        except Exception as e:
+            print('INVALID REQUEST DISTANCE :',str(e) )
 
-        SOC = self.ids.SOC_value.text
-        SOC = SOC.replace("%","")
-        print(float(SOC))
-        eco = 45
-        normal = 60
-        sport = 70
-        speedmode = [eco, normal, sport]
+        try:
+            #SOC_value = self.ids.SOC_value.text
+            print("SOC :",SOC_value)
+            SOC = SOC_value
+            SOC = SOC_value.replace("%","")
+            print(float(SOC))
+            eco = 45
+            normal = 60
+            sport = 70
+            speedmode = [eco, normal, sport]
+        except Exception as e:
+            print('INVALID STORING DATA :',str(e) )
+        
 
         try:
             length = TrueDistance
@@ -161,7 +170,7 @@ class MyLayout(Screen):
                 coba = [[float(SOC), float(x), float(length)]]
                 data = scaler.transform(coba)
                 test = model.predict(data)
-                print("estimasi pemakaian energi :", float(test))
+                print("estimasi pemakaian energi :",float(x), float(test))
                 if (float(SOC) - (3/100)*5 <= float(test)):
                     if x == eco:
                         estimasi_eco = "TIDAK"
@@ -177,14 +186,41 @@ class MyLayout(Screen):
                         estimasi_normal = "CUKUP"
                     elif x == sport:
                         estimasi_sport = "CUKUP"
+        except Exception as e:
+            print('estimation error :',str(e) )
 
-            self.ids.recommendation.text = "ECO          :  %s\n\nNORMAL  :  %s\n\nSPORT     :  %s" %(estimasi_eco, estimasi_normal, estimasi_sport)
-            popup = Popup(title='Test popup',
-                        content=Label(text='Hello world'),
-                        size_hint=(None, None), size=(400, 400))
-            popup.open()
-        except Exception:
-            print('ERROR ESTIMATION')
+        try:
+            lay.ids.recommendation.text = "ECO          :  %s\n\nNORMAL  :  %s\n\nSPORT     :  %s" %(estimasi_eco, estimasi_normal, estimasi_sport)
+            #popup = Popup(title='Test popup',
+            #            content=Label(text='Hello world'),
+            #            size_hint=(None, None), size=(400, 400))
+            #popup.open()
+        except Exception as e:
+            print('recommendation error :',str(e) )
+        #try:
+        #    MyLayout.move_s_mini2(lay)
+        #    MyLayout.move_menubar_left2(lay)
+        #    MyLayout.move_maps(lay)
+        #    self.root.ids.SOC_value.text = "21"
+        #    #lay.ids.
+        #except Exception as e:
+        #    print('changing screen error :',str(e) )
+
+
+        MyLayout.estimasi.has_been_called = True
+        
+            #lay.ids.screendget_mini.switch_to(lay.ids.s_mini2)
+            #lay.ids.menubar_left.switch_to(lay.ids.menubar_leftTop2)
+            #lay.ids.screendget.switch_to(lay.ids.test2)
+
+        #try:
+        #    mapview = self.root.ids.mapview
+        #    lat = self.root.geolat_destination
+        #    lng = self.root.geolng_destination
+        #    mapview.center_on(lat, lng)
+        #except Exception as e:
+        #    print('center map error :',str(e) )
+
         #self.ids.window2.open()
         #self.ids.estimasi_output.text = bisa
         #home= input("Home address \n")
@@ -206,6 +242,7 @@ class MyLayout(Screen):
         self.ids.screendget_mini.switch_to(self.ids.s_mini1)
 
     def move_menubar_left2(self):
+        
         self.ids.menubar_left.switch_to(self.ids.menubar_leftTop2)
 
     def move_menubar_left1(self):
@@ -217,6 +254,7 @@ class MyLayout(Screen):
  
     def move_maps(self):
         #self.ids.screendget.remove_widget(self.ids.test1)
+        
         self.ids.screendget.switch_to(self.ids.test2)
     
     def center_maps(self):
@@ -246,7 +284,7 @@ class MyLayout(Screen):
         self.tujuan = self.ids.tujuan.text
 
       
-        return Gesits()
+    
         
 #class AKFloatingWindow(
 #    ThemableBehavior, FakeRectangularElevationBehavior, BoxLayout
@@ -299,8 +337,89 @@ class Gesits(MDApp):
         #tambah detik = :%S
         self.root.ids.time.text = strftime('[b]%H[/b]:%M')
 
-    def ifi_function(self):
-        MyLayout.estimasi()
+    #def ifi_function(self):
+    #    MyLayout.estimasi()
+
+
+
+
+
+    #while Test().run():
+    ##print (file["password"])
+    # function to connect to a network   
+    def connect(self, name, password):
+        self.commandl = "nmcli dev wifi connect "+name+" password "+password+""
+        # print ("success connection : ",sub.out)
+        self.sub(self.commandl)
+    
+    # function to display avavilabe Wifi networks   
+    def displayAvailableNetworks(self):
+        self.commandl = "nmcli dev wifi"
+        self.sub(self.commandl)
+
+
+    def sub(self,command):
+        self.proc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+        (out, err) = self.proc.communicate()
+        print ("program output : ", out)
+        print ("error : ",err)
+        
+
+    # def destination_input(destinationinput):
+    #     MyLayout.estimasi(destinationinput)
+    def comm_con(self, val):
+        lay = MyLayout() 
+        val = ""
+        tuj = ""
+        SOC = 2
+        SOC_value = round((SOC/3)*100, 1)
+        SOC_value = str(SOC_value)+"%"
+        #displayAvailableNetworks()
+        while True:
+            f = open('con-log.json')
+            file = json.load(f)
+            tujuan = file['address']['tujuan']
+            wifiID = file['connection']['wifiID']
+            password = file['connection']['password']
+            #print (tujuan)
+            if len(wifiID) == 0:
+                if len(tujuan) == 0:
+                    pass
+                else:
+                    if tuj != tujuan:
+                        try:
+                            #fungsi tujuan
+                            MyLayout.estimasi(lay, tujuan, SOC_value)
+                            MyLayout.move_s_mini2(lay)
+                            MyLayout.move_menubar_left2(lay)
+                            MyLayout.move_maps(lay)
+                            tuj = tujuan
+                        except Exception as e:
+                            print('estimation error :',str(e) )
+                    else:
+                        pass
+            else:
+                if len(password) == 0:
+                    pass
+                else:
+                    #code disini
+                    if val != wifiID:
+                        try:
+                            self.connect(wifiID, password)
+                            val = wifiID
+                            #test = sub.out
+                        except:
+                            print("gagal untuk menyambungkan")
+                            pass
+                    else:
+                        pass
+                        #else:
+                        #    print ("koneksi sukses")
+            # if len(tujuan) == 0:
+            #     pass
+            # else:
+            #     print ("tujuan ada")
+            time.sleep(3)
 
     def build(self):
         #self.theme_cls.accent_color = "Green"
@@ -309,6 +428,7 @@ class Gesits(MDApp):
         #self.theme_cls.primary_hue = "800" 
         self.theme_cls.primary_palette = "Red"
         self.theme_cls.primary_hue = "500" 
+
         #text_file = open("hotReloader.kv", "r")
         #KV = text_file.read()
         #return Builder.load_string(KV)w
@@ -385,7 +505,9 @@ class Gesits(MDApp):
             #time.sleep(1)
 
     def on_start(self):
-        Clock.schedule_interval(self.update_time, 0)
+        
+        self.sub1 = Clock.schedule_interval(self.update_time, 0)
+
         #Clock.schedule_interval(self.connection, 0)
          #capture_output=True)
         #for i in range(20):
@@ -396,85 +518,18 @@ class Gesits(MDApp):
         self.root.ids.rpm.value = speed
         speed_value = "%s km/h" %(str(speed))
         self.root.ids.speed_value.text = speed_value
-
+        print(speed_value)
+        
         SOC = 2
         SOC_value = round((SOC/3)*100, 1)
         SOC_value = str(SOC_value)+"%"
         self.root.ids.SOC_value.text = SOC_value
+        print(SOC_value)
 
+        Clock.schedule_interval(self.comm_con, 15)
 
-
-    #while Test().run():
-    ##print (file["password"])
-    # function to connect to a network   
-    def connect(self, name, password):
-        self.commandl = "nmcli dev wifi connect "+name+" password "+password+""
-        # print ("success connection : ",sub.out)
-        self.sub(self.commandl)
-    
-    # function to display avavilabe Wifi networks   
-    def displayAvailableNetworks(self):
-        self.commandl = "nmcli dev wifi"
-        self.sub(self.commandl)
-
-
-    def sub(self,command):
-        self.proc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
-        (out, err) = self.proc.communicate()
-        print ("program output : ", out)
-        print ("error : ",err)
-        return out
-
-    # def destination_input(destinationinput):
-    #     MyLayout.estimasi(destinationinput)
-    val = ""
-    tuj = ""
-    displayAvailableNetworks()
-    while True:
-        f = open('con-log.json')
-        file = json.load(f)
-        tujuan = file['address']['tujuan']
-        wifiID = file['connection']['wifiID']
-        password = file['connection']['password']
-        #print (tujuan)
-        if len(wifiID) == 0:
-            if len(tujuan) == 0:
-                pass
-            else:
-                if tuj != tujuan:
-                    try:
-                        #fungsi tujuan
-                        print(tujuan)
-                        tuj = tujuan
-                        pass
-                    except:
-                        print("gagal mencari tujuan")
-                else:
-                    pass
-        else:
-            if len(password) == 0:
-                pass
-            else:
-                #code disini
-                if val != wifiID:
-                    try:
-                        connect(wifiID, password)
-                        val = wifiID
-                        #test = sub.out
-                    except:
-                        print("gagal untuk menyambungkan")
-                        pass
-                else:
-                    pass
-                    #else:
-                    #    print ("koneksi sukses")
-        # if len(tujuan) == 0:
-        #     pass
-        # else:
-        #     print ("tujuan ada")
-        time.sleep(1)
-
-        
+MyLayout.estimasi.has_been_called = False
+Gesits().run()
             
     #def bluetooth(self):
     #    try:
@@ -512,13 +567,9 @@ class Gesits(MDApp):
 #asyncio.run(run('python3 rfcomm-server.py'))
 
 
-
-blu = Popen("python3 rfcomm_server.py", shell=True);
-ifi = Popen("python3 testing.py", shell=True);
-
-
+##blu = Popen("python3 rfcomm_server.py", shell=True);
+##ifi = Popen("python3 testing.py", shell=True);
 #stdout = blu.communicate()
 #blu_val = blu.stdout.read()
 #print(blu_val)
 #print(arch)
-Gesits().run()

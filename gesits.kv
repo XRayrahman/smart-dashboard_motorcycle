@@ -109,7 +109,42 @@
                         size_hint_y:1
                         Screen:
                             id: menubar_leftTop1
-                            name:'menubar_leftTop1'
+                            name: "menubar_leftTop1"
+                            BoxLayout:
+                                orientation: "vertical"
+                                spacing:'25dp'
+                                CardLayout:
+                                    orientation: "horizontal"
+                                    size_hint_y: 0.4
+                                    MDIconButton: 
+                                        icon: "road-variant"
+                                        user_font_size: "50sp"
+                                        theme_text_color: "Custom"
+                                        text_color: app.theme_cls.primary_color
+                                        pos_hint:{"center_x": .1, "center_y": .5}
+                                    Label_roboto:
+                                        id: DummyDistance
+                                        text: ""
+                                        font_size: "24sp"
+                                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                                CardLayout:
+                                    orientation: "horizontal"
+                                    size_hint_y: 0.4
+                                    #MDIconButton: 
+                                    #    icon: "clock-time-three-outline"
+                                    #    user_font_size: "50sp"
+                                    #    theme_text_color: "Custom"
+                                    #    text_color: app.theme_cls.primary_color
+                                    #    pos_hint:{"center_x": .1, "center_y": .5}
+                                    Label_roboto:
+                                        id: DummyTimeEst
+                                        text: ""
+                                        font_size: "24sp"
+                                        pos_hint: {"center_x": .5, "center_y": .5}
+                        Screen:
+                            id: menubar_leftTop2
+                            name:'menubar_leftTop2'
                             BoxLayout:
                                 orientation: "vertical"
                                 spacing:'25dp'
@@ -145,41 +180,6 @@
                                         font_size: "24sp"
                                         pos_hint: {"center_x": .5, "center_y": .5}
                         
-                        Screen:
-                            id: menubar_leftTop2
-                            name: "menubar_leftTop2"
-                            BoxLayout:
-                                orientation: "vertical"
-                                spacing:'25dp'
-                                CardLayout:
-                                    orientation: "horizontal"
-                                    size_hint_y: 0.4
-                                    MDIconButton: 
-                                        icon: "road-variant"
-                                        user_font_size: "50sp"
-                                        theme_text_color: "Custom"
-                                        text_color: app.theme_cls.primary_color
-                                        pos_hint:{"center_x": .1, "center_y": .5}
-                                    Label_roboto:
-                                        id: DummyDistance
-                                        text: ""
-                                        font_size: "24sp"
-                                        pos_hint: {"center_x": .5, "center_y": .5}
-
-                                CardLayout:
-                                    orientation: "horizontal"
-                                    size_hint_y: 0.4
-                                    #MDIconButton: 
-                                    #    icon: "clock-time-three-outline"
-                                    #    user_font_size: "50sp"
-                                    #    theme_text_color: "Custom"
-                                    #    text_color: app.theme_cls.primary_color
-                                    #    pos_hint:{"center_x": .1, "center_y": .5}
-                                    Label_roboto:
-                                        id: DummyTimeEst
-                                        text: ""
-                                        font_size: "24sp"
-                                        pos_hint: {"center_x": .5, "center_y": .5}
 
                     ScreenManager:
                         id:screendget_mini
@@ -187,19 +187,6 @@
                         Screen:
                             id:s_mini1
                             name:'s_mini1'
-                            CardLayout:   
-                                size_hint:1,1
-                                padding:"15dp"
-                                MyAKLineChart:
-                                    id: chart2
-                                    size_hint_y:1
-                                    labels: True
-                                    anim: True
-                                    Label: 
-                                        text:""
-                        Screen:
-                            id:s_mini2
-                            name:'s_mini2'
                             CardLayout:
                                 orientation: 'vertical'
                                 size_hint_y: 1
@@ -231,6 +218,19 @@
                                     text_size: self.size
                                     size_hint:1,0.8
                                     font_siz: "12sp"
+                        Screen:
+                            id:s_mini2
+                            name:'s_mini2'
+                            CardLayout:   
+                                size_hint:1,1
+                                padding:"15dp"
+                                MyAKLineChart:
+                                    id: chart2
+                                    size_hint_y:1
+                                    labels: True
+                                    anim: True
+                                    Label: 
+                                        text:""
                             
                             #on_select: root.set_text(args)
                         #Label:
