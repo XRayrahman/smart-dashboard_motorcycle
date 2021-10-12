@@ -61,7 +61,7 @@
     markup: True
 
 <MyLayout>
-
+    #screendget_mini:
     BoxLayout:
         orientation:'vertical'
         size:root.height,root.width
@@ -70,14 +70,6 @@
             Rectangle:
                 source: 'bg.png'
                 size: self.height, self.width
-        #MDToolbar:
-        #    title: "GESITS"
-        #    elevation:10
-        #    right_action_items: [["dots-vertical", lambda x: app.callback()]]
-        #    height: 20
-        #    #padding: "25dp"
-        #    md_bg_color: 5/255,2/255,21/255,1
-        #    #anchor_left:True
             
             
         MDBoxLayout:
@@ -96,12 +88,6 @@
                     rows:3
                     size_hint:0.3,1
                     spacing:"25dp"
-                    #canvas:
-                    #    Color:
-                    #        rgba:(5/255,2/255,21/255,1)
-                    #    RoundedRectangle:
-                    #        size: self.size
-                    #        pos: self.pos
                     
 
                     ScreenManager:
@@ -109,42 +95,7 @@
                         size_hint_y:1
                         Screen:
                             id: menubar_leftTop1
-                            name: "menubar_leftTop1"
-                            BoxLayout:
-                                orientation: "vertical"
-                                spacing:'25dp'
-                                CardLayout:
-                                    orientation: "horizontal"
-                                    size_hint_y: 0.4
-                                    MDIconButton: 
-                                        icon: "road-variant"
-                                        user_font_size: "50sp"
-                                        theme_text_color: "Custom"
-                                        text_color: app.theme_cls.primary_color
-                                        pos_hint:{"center_x": .1, "center_y": .5}
-                                    Label_roboto:
-                                        id: DummyDistance
-                                        text: ""
-                                        font_size: "24sp"
-                                        pos_hint: {"center_x": .5, "center_y": .5}
-
-                                CardLayout:
-                                    orientation: "horizontal"
-                                    size_hint_y: 0.4
-                                    #MDIconButton: 
-                                    #    icon: "clock-time-three-outline"
-                                    #    user_font_size: "50sp"
-                                    #    theme_text_color: "Custom"
-                                    #    text_color: app.theme_cls.primary_color
-                                    #    pos_hint:{"center_x": .1, "center_y": .5}
-                                    Label_roboto:
-                                        id: DummyTimeEst
-                                        text: ""
-                                        font_size: "24sp"
-                                        pos_hint: {"center_x": .5, "center_y": .5}
-                        Screen:
-                            id: menubar_leftTop2
-                            name:'menubar_leftTop2'
+                            name:'menubar_leftTop1'
                             BoxLayout:
                                 orientation: "vertical"
                                 spacing:'25dp'
@@ -180,6 +131,35 @@
                                         font_size: "24sp"
                                         pos_hint: {"center_x": .5, "center_y": .5}
                         
+                        Screen:
+                            id: menubar_leftTop2
+                            name: "menubar_leftTop2"
+                            BoxLayout:
+                                orientation: "vertical"
+                                spacing:'25dp'
+                                CardLayout:
+                                    orientation: "horizontal"
+                                    size_hint_y: 0.4
+                                    MDIconButton: 
+                                        icon: "road-variant"
+                                        user_font_size: "50sp"
+                                        theme_text_color: "Custom"
+                                        text_color: app.theme_cls.primary_color
+                                        pos_hint:{"center_x": .1, "center_y": .5}
+                                    Label_roboto:
+                                        id: DummyDistance
+                                        text: ""
+                                        font_size: "24sp"
+                                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                                CardLayout:
+                                    orientation: "horizontal"
+                                    size_hint_y: 0.4
+                                    Label_roboto:
+                                        id: DummyTimeEst
+                                        text: ""
+                                        font_size: "24sp"
+                                        pos_hint: {"center_x": .5, "center_y": .5}
 
                     ScreenManager:
                         id:screendget_mini
@@ -187,6 +167,18 @@
                         Screen:
                             id:s_mini1
                             name:'s_mini1'
+                            CardLayout:   
+                                size_hint:1,1
+                                padding:"15dp"
+                                MyAKLineChart:
+                                    id: chart2
+                                    size_hint_y:1
+                                    labels: True
+                                    anim: True
+                                    Label: 
+                                        text:""
+                        Screen:
+                            id:s_mini2
                             CardLayout:
                                 orientation: 'vertical'
                                 size_hint_y: 1
@@ -218,44 +210,6 @@
                                     text_size: self.size
                                     size_hint:1,0.8
                                     font_siz: "12sp"
-                        Screen:
-                            id:s_mini2
-                            name:'s_mini2'
-                            CardLayout:   
-                                size_hint:1,1
-                                padding:"15dp"
-                                MyAKLineChart:
-                                    id: chart2
-                                    size_hint_y:1
-                                    labels: True
-                                    anim: True
-                                    Label: 
-                                        text:""
-                            
-                            #on_select: root.set_text(args)
-                        #Label:
-                        #    id: name_label
-                        #    text: "sisa SOC (akan diganti origin)"
-                        #    size_hint:0.8,0.1
-                        #    color: (1.1,1,1)
-                        #    font_size: 12
-                        #    pos_hint: {"center_x": .5, "center_y": .5}
-                        #BoxLayout:
-                        #    orientation: "horizontal"
-                        #    size_hint:0.8,0.2
-                        #    pos_hint: {"center_x": .5, "center_y": .5}
-
-                        #    TextInput:
-                        #        id: name_input
-                        #        #on_parent:self.focus = True
-                        #        textinput: ""
-                        #        multiline: False
-                        #        size_hint: 0.7,1
-                        #    Button: 
-                        #        background_color: 1.1,1,1
-                        #        size_hint:0.2,1
-                        #        padding:0.5,0.5
-                        #        on_press:root.press()
                         
 
                     BoxLayout:
@@ -292,16 +246,6 @@
                         #padding:"15dp"
                         spacing:"25dp"
                         orientation: "vertical"
-                        #canvas:
-                        #    Color:
-                        #        rgba:(5/255,2/255,21/255,1)
-                        #    RoundedRectangle:
-                        #        size: self.size
-                        #        pos: self.pos
-
-                        #CEFBrowser:
-                        #    url:"file:///home/raizen/neiro/GMAPS/map.html"
-                            #size_hint:
                         ScreenManager:
                             id:screendget
                             Screen:
@@ -381,31 +325,6 @@
                                             font_size:24
                                             text: '[b]00[/b]:00'
 
-                                        #AKCircularProgress:
-                                        #    id: progress_percent
-                                        #    pos_hint: {"center_x": .5, "center_y": .5}
-                                        #    size_hint: .5,.3
-                                        #    #size: dp(100), dp(100)
-                                        #    percent_type: "percent"
-                                        #    start_deg: 180
-                                        #    end_deg: 540
-
-                                        #MDBoxLayout:
-                                        #    spacing: dp(5)
-                                        #    size_hint:1,.2
-                                        #    MDBoxLayout:
-#
-                                        #    Button:
-                                        #        text: "0"
-                                        #        on_release: progress_percent.current_percent = 0
-#
-                                        #    Button:
-                                        #        text: "45"
-                                        #        on_release: progress_percent.current_percent = 45
-#
-                                        #    Button:
-                                        #        text: "100"
-                                        #        on_release: progress_percent.current_percent = 100
 
                             Screen:
                                 id:test2
@@ -504,69 +423,33 @@
                                         ripple_scale: 0
                                         font_size: "30sp"
                                         on_release: root.move_graph()
-                            #AKBottomNavigation2:
-                            #    #size_hint: 1,1
-                            #    bg_color: app.theme_cls.bg_darkest
-#
-                            #    On_active_button:
-                            #        ripple_scale: 0
-                            #        text: "Alert"
-                            #        icon: "bell-outline"
-#
-                            #    On_active_button:
-                            #        font_size:"30sp"
-                            #        text: "Bank"
-                            #        icon: "bank-outline"
-#
-                            #    On_active_button:
-                            #        text: "Download"
-                            #        icon: "arrow-down-bold-outline"
                             Label_roboto:
-                                text:"tujuan :"
+                                text:"GESITS"
                                 size_hint:0.1,1
                                 font_size:"15sp"
-                            MDTextField:
-                                id: tujuan
-                                hint_text: "input alamat"
-                                mode: "rectangle" 
-                                pos_hint: {"left":1}   
-                                size_hint: .4,1
-                                multiline: False
-                                write_tab: False
-                            MDFillRoundFlatButton:
-                                id: button_estimasi
-                                pos_hint: {"center_x": .5, "center_y": .5}
-                                text: "estimasi"
-                                #color: 1,1,1,1
-                                size_hint:0.2,0.7
-                                on_press: root.estimasi()
-                                on_release: root.move_maps()
-                                on_release: root.center_maps()
-                                on_release: root.move_s_mini2()
-                                on_release: root.move_menubar_left2()
+                            #MDTextField:
+                            #    id: tujuan
+                            #    hint_text: "input alamat"
+                            #    mode: "rectangle" 
+                            #    pos_hint: {"left":1}   
+                            #    size_hint: .4,1
+                            #    multiline: False
+                            #    write_tab: False
+                            #MDFillRoundFlatButton:
+                            #    id: button_estimasi
+                            #    pos_hint: {"center_x": .5, "center_y": .5}
+                            #    text: "estimasi"
+                            #    #color: 1,1,1,1
+                            #    size_hint:0.2,0.7
+                                #on_press: root.estimasi()
+                                #on_release: root.move_maps()
+                                #on_release: root.center_maps()
+                                #on_release: root.move_s_mini2()
+                                #on_release: root.move_menubar_left2()
                                 #on_release:root.estimasi()
                                 #icon_right:xxxxxxxxxxxxx "card-search-outline"
                                #normal_color: app.theme_cls.accent_color
                             
-                        #SpeedMeter:
-                        #    size_hint:0.8,1
-                        #    id: rpm
-                        #    max: 100
-                        #    tick: 200
-                        #    start_angle: -90
-                        #    end_angle: 135
-                        #    subtick: 3
-                        #    label: 'km/h'
-                        #    value: 50
-                        #    cadran_color: '#0E0B1E'
-                        #    shadow_color: '#92DAF1'
-                        #    #needle_color: '#ff0000'
-                        #    sectors: [0, '#050215']
-                        #    sector_width: 7
-#
-                        #Label:
-                        #    text: 'MODE ECO'
-                        #    size_hint: 0.2,1
 #
                     BoxLayout:
                         size_hint: 1, 0.25
