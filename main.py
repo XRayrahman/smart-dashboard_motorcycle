@@ -3,6 +3,7 @@ from kivymd.app import MDApp
 from kivy.app import App
 #from kivy.uix.label import Label
 from kivy.animation import Animation
+from kivy.factory import Factory
 from kivy.core.window import Window
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
@@ -12,6 +13,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivymd.theming import ThemableBehavior
 from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.list import OneLineListItem
+from kivymd.uix.dialog import MDDialog
 from kivy.lang import Builder
 #from kivy.uix.widget import Widget
 from kivy.uix.screenmanager import ScreenManager, Screen
@@ -34,6 +36,7 @@ from subprocess import Popen, PIPE, STDOUT
 import asyncio
 from kivy_garden.speedmeter import SpeedMeter
 from kivy_garden.qrcode import QRCodeWidget
+from kivy_garden.mapview import MapView, MapMarker 
 from kivymd_extensions.akivymd import *
 from kivy.properties import (
     BooleanProperty,
@@ -52,7 +55,19 @@ from kivy.base import ExceptionHandler, ExceptionManager
 #Window.fullscreen = True
 #Window.maximize()
 
+class Progress(Popup):
+    
+    def __init__(self, **kwargs):
+        super(Progress, self).__init__(**kwargs)
+        # call dismiss_popup in 2 seconds
+        Clock.schedule_once(self.dismiss_popup, 3)
+
+    def dismiss_popup(self, *args):
+        self.dismiss()
 class MyLayout(Screen):
+
+    #def Popup_open():
+        
 
     def comm_con(self,*args):
         try:
@@ -101,7 +116,9 @@ class MyLayout(Screen):
             print("error center map:", str(e))
 
         try:
-            mapview.add_marker(lat=lat, lon=lng)
+            self.marker = MapMarker(lat=lat, lon=lng, source="marker-red.png")
+            mapview.add_widget(self.marker)
+            #mapview.add_marker(lat=lat, lon=lng)
         except Exception as e:
             print("error marker map:", str(e))
         
@@ -150,34 +167,31 @@ class MyLayout(Screen):
         model = joblib.load('estimasi_rev1.pkl')
 
         self.origin = (-2.01234699405899,29.377851313693) 
-
-        #conn = http.client.HTTPSConnection("www.googleapis.com")
-        #userinput= "pasar turi"
-        #userinput = self.ids.tujuan.text
-        destinationinput = urllib.parse.quote(userinput)
-        print(destinationinput)
-
+        #destinationinput = urllib.parse.quote(userinput)
+        #print(destinationinput)
+        placeid_destination = userinput
+        
+        
+        
         try:
-            placeID_Destination_URL = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input="+destinationinput+"&inputtype=textquery&locationbias=ipbias&key=AIzaSyCFIna2ndU8cxZRJN0FfH9KqvlOSvDzTDw&fields=geometry%2Cplace_id"
-        except Exception:
-            self.ids.DummytimeEst.text = "Timeout"
-            self.ids.DummyDistance.text = "Timeout"
+            placeID_Destination_URL = "https://maps.googleapis.com/maps/api/place/details/json?place_id="+placeid_destination+"&key=AIzaSyCFIna2ndU8cxZRJN0FfH9KqvlOSvDzTDw&fields=geometry"
+        except Exception as e:
+            print('INVALID URL',str(e))
         payload={}
         headers = {}
-        
         try:
             response = requests.request("GET", placeID_Destination_URL, headers=headers, data=payload)
             #print(DestinationJSON)
             print(response.text)
             responseJSON = json.loads(response.text)
-            self.geolat_destination = responseJSON['candidates'][0]['geometry']['location']['lat']
-            self.geolng_destination = responseJSON['candidates'][0]['geometry']['location']['lng']
-            placeid_destination = responseJSON['candidates'][0]['place_id']
+            self.geolat_destination = responseJSON['result']['geometry']['location']['lat']
+            self.geolng_destination = responseJSON['result']['geometry']['location']['lng']
             self.str_geolat_destination = str(self.geolat_destination)
             self.str_geolng_destination = str(self.geolng_destination)
             print(placeid_destination)
         except Exception as e:
             print('INVALID REQUEST DESTINATION',str(e))
+
         Distancematrix_URL = "https://maps.googleapis.com/maps/api/distancematrix/json?mode=driving&key="+API_key+"&destinations=place_id:"+placeid_destination+"&origins=sukolilo&key=AIzaSyCFIna2ndU8cxZRJN0FfH9KqvlOSvDzTDw"
         #-- Parameter Tambahan --
         #&units=metric&traffic_model=pessimistic
@@ -242,13 +256,15 @@ class MyLayout(Screen):
 
         #try:
         self.ids.recommendation.text = "ECO          :  %s\n\nNORMAL  :  %s\n\nSPORT     :  %s" %(estimasi_eco, estimasi_normal, estimasi_sport)
-        #    self.move_s_mini1()
-        #    #popup = Popup(title='Test popup',
-        #    #            content=Label(text='Hello world'),
-        #    #            size_hint=(None, None), size=(400, 400))
-        #    #popup.open()
-        #except Exception as e:
-        #    print('recommendation error :',str(e) )
+
+        try:
+            self.popup = MDDialog(title='Tersambung',
+                        radius=[20, 7, 20, 7],
+                        md_bg_color=(244/255,67/255,54/255,1),
+                        size_hint=(None, None), size=(400, 400))
+            self.popup.open()
+        except Exception as e:
+            print('recommendation error :',str(e) )
     
     
     
@@ -305,7 +321,15 @@ class Gesits(MDApp):
                 if self.tuj != tujuan:
                     try:
                         #fungsi tujuan
-                        self.root.estimasi(tujuan, SOC_value)
+                        try:
+                            self.root.ids.mapview.remove_widget(self.root.marker)
+                        except Exception as e:
+                            print('marker error :',str(e) )
+                        try:
+                            self.root.estimasi(tujuan, SOC_value)
+                        except Exception as e:
+                            print('estimation error :',str(e) )
+                            
                         self.root.center_maps()
                         self.root.ids.screendget_mini.switch_to(self.root.ids.s_mini2)
                         self.root.ids.screendget.switch_to(self.root.ids.test2)
@@ -313,7 +337,7 @@ class Gesits(MDApp):
                         self.tuj = tujuan
                         print("selesai")
                     except Exception as e:
-                        print('estimation error :',str(e) )
+                        print('function error :',str(e) )
                 else:
                     pass
         else:
@@ -323,7 +347,7 @@ class Gesits(MDApp):
                 #code disini
                 if self.val != wifiID:
                     try:
-                        self.connect(wifiID, password)
+                        self.root.connect(wifiID, password)
                         self.val = wifiID
                         #test = sub.out
                     except:
@@ -346,7 +370,7 @@ class Gesits(MDApp):
 
     def on_start(self):
         
-        self.sub1 = Clock.schedule_interval(self.update_time, 7)
+        self.sub1 = Clock.schedule_interval(self.update_time, 5)
 
         speed = 47
         self.root.ids.rpm.value = speed
@@ -364,10 +388,10 @@ class Gesits(MDApp):
 
 #MyLayout.estimasi.has_been_called = False
 lay = MyLayout()
+blu = Popen("python3 rfcomm_server.py", shell=True);
 Gesits().run()
 
 
-##blu = Popen("python3 rfcomm_server.py", shell=True);
 ##ifi = Popen("python3 testing.py", shell=True);
 #stdout = blu.communicate()
 #blu_val = blu.stdout.read()

@@ -46,6 +46,14 @@
     border_radius:50
     radius:[5]
 
+<Progress>
+    MDDialog:
+        title:'Tersambung'
+        radius:[20, 7, 20, 7],
+        md_bg_color:244/255,67/255,54/255,1
+        size_hint:None, None
+        size:400, 400
+
 <CardLayout@BoxLayout>
     padding:"25dp"
     canvas:
@@ -336,22 +344,12 @@
                                     lat:-7.2575
                                     lon:112.7521
                                     #map_source: 'osm-hot'
-                                    map_source: MapSource.MapSource(cache_key='cartodb-darkmatter', url='https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', attribution='')
+                                    #map_source: MapSource.MapSource(url='https://tile.thunderforest.com/mobile-atlas/{z}/{x}/{y}.png?apikey=f872d70d2fa74f1c96049845e81a8a99', attribution='')
+                                    map_source: MapSource.MapSource(cache_key='cartodb-darkmatter', url='https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png?apikey=f872d70d2fa74f1c96049845e81a8a99', attribution='')
+                                    #https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png
+                                    #cache_key='cartodb-darkmatter'
                                     marker:
-                                        #lat:-7.2575
-                                        #lon:112.7521
-                                    #center_on:
-                                    #    lat:-7.2575
-                                    #    lon:112.7521
-                                    #add_marker:
-                                        #Button:
-                                        #    on_release:
-                                        #        print("hey")
 
-                            
-                    
-                                    
-                            
                             Screen:
                                 id:test3
                                 name: "screen3"
@@ -371,10 +369,7 @@
                                             text_color: 1,1,1,1
                                             #BaseListItem:
                                             #    theme_text_color: 'Primary'
-                                            
-
-
-
+                                        
                         BoxLayout:
                             orientation: "horizontal"
                             size_hint: 1,.15
