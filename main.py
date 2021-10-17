@@ -1,6 +1,5 @@
 from logging import root
 from kivymd.app import MDApp
-from kivy.app import App
 #from kivy.uix.label import Label
 from kivy.animation import Animation
 from kivy.factory import Factory
@@ -24,19 +23,31 @@ import googlemaps
 import pandas as pd
 import joblib
 #import cefpython3 as cef
+import requests
 import json
 import http.client
 from datetime import datetime
 from time import strftime
+from math import *
 import time
 from kivy.clock import Clock
 import urllib
 import subprocess
 from subprocess import Popen, PIPE, STDOUT
-import asyncio
+#import asyncio
+from kivy.graphics import Color, Line, SmoothLine, MatrixInstruction
+from kivy.graphics.context_instructions import Translate, Scale
 from kivy_garden.speedmeter import SpeedMeter
 from kivy_garden.qrcode import QRCodeWidget
-from kivy_garden.mapview import MapView, MapMarker 
+from kivy_garden.mapview.utils import clamp
+from kivy_garden.mapview import MapView, MapMarker , MapLayer
+from kivy_garden.mapview.constants import (
+    CACHE_DIR,
+    MAX_LATITUDE,
+    MAX_LONGITUDE,
+    MIN_LATITUDE,
+    MIN_LONGITUDE,
+)
 from kivymd_extensions.akivymd import *
 from kivy.properties import (
     BooleanProperty,
@@ -55,15 +66,98 @@ from kivy.base import ExceptionHandler, ExceptionManager
 #Window.fullscreen = True
 #Window.maximize()
 
-class Progress(Popup):
+class Gesits(MDApp):
+    sw_started= False
+    sw_seconds = 0
+    val = ""
+    tuj = ""
+    def update_time(self, nap):
+        if self.sw_started:
+            self.sw_seconds += nap
+        #tambah detik = :%S
+        #self.root.ids.SOC_value.text = "blok"
+        self.root.ids.time.text = strftime('[b]%H[/b]:%M')
+        #self.root.ids.recommendation.text = "test1"
+        SOC = 2
+        SOC_value = round((SOC/3)*100, 1)
+        SOC_value = str(SOC_value)+"%"
+        #displayAvailableNetworks()
+        f = open('con-log.json')
+        file = json.load(f)
+        tujuan = file['address']['tujuan']
+        wifiID = file['connection']['wifiID']
+        password = file['connection']['password']
+        #print (tujuan)
+        if len(wifiID) == 0:
+            if len(tujuan) == 0:
+                pass
+            else:
+                if self.tuj != tujuan:
+                    try:
+                        #fungsi tujuan
+                        try:
+                            self.root.ids.mapview.remove_widget(self.root.marker)
+                        except Exception as e:
+                            print('marker error :',str(e) )
+                        try:
+                            self.root.estimasi(tujuan, SOC_value)
+                        except Exception as e:
+                            print('estimation error :',str(e) )
+                            
+                        self.root.center_maps()
+                        self.root.ids.screendget_mini.switch_to(self.root.ids.s_mini2)
+                        self.root.ids.screendget.switch_to(self.root.ids.test2)
+                        self.root.ids.menubar_left.switch_to(self.root.ids.menubar_leftTop2)
+                        self.tuj = tujuan
+                        print("selesai")
+                    except Exception as e:
+                        print('function error :',str(e) )
+                else:
+                    pass
+        else:
+            if len(password) == 0:
+                pass
+            else:
+                #code disini
+                if self.val != wifiID:
+                    try:
+                        self.root.connect(wifiID, password)
+                        self.val = wifiID
+                        #test = sub.out
+                    except:
+                        print("gagal untuk menyambungkan")
+                        pass
+                else:
+                    pass
+                    #else:
+                    #    print ("koneksi sukses")
     
-    def __init__(self, **kwargs):
-        super(Progress, self).__init__(**kwargs)
-        # call dismiss_popup in 2 seconds
-        Clock.schedule_once(self.dismiss_popup, 3)
 
-    def dismiss_popup(self, *args):
-        self.dismiss()
+    def build(self):
+        #self.theme_cls.accent_color = "Green"
+        self.theme_cls.theme_style = "Dark"
+        #self.theme_cls.primary_palette = "BlueGray"
+        #self.theme_cls.primary_hue = "800" 
+        self.theme_cls.primary_palette = "Red"
+        self.theme_cls.primary_hue = "500" 
+        return MyLayout()
+
+    def on_start(self):
+        
+        self.sub1 = Clock.schedule_interval(self.update_time, 5)
+
+        speed = 47
+        self.root.ids.rpm.value = speed
+        speed_value = "%s km/h" %(str(speed))
+        self.root.ids.speed_value.text = speed_value
+        print(speed_value)
+        
+        SOC = 2
+        SOC_value = round((SOC/3)*100, 1)
+        SOC_value = str(SOC_value)+"%"
+        self.root.ids.SOC_value.text = SOC_value
+        print(SOC_value)
+        print(Clock.max_iteration)
 class MyLayout(Screen):
 
     #def Popup_open():
@@ -107,16 +201,18 @@ class MyLayout(Screen):
     def center_maps(self):
         try:
             mapview = self.ids.mapview
-            lat = self.geolat_destination
-            lng = self.geolng_destination
-            mapview.center_on(lat, lng)
+            self.lat = self.geolat_destination
+            self.lng = self.geolng_destination
+            line = LineMapLayer(self.lat, self.lng)
+            mapview.add_layer(line, mode='scatter')
+            mapview.center_on(self.lat, self.lng)
             #marker1 = MapMarkerPopup(lat=lat, lon=lng) 
 
         except Exception as e:
             print("error center map:", str(e))
 
         try:
-            self.marker = MapMarker(lat=lat, lon=lng, source="marker-red.png")
+            self.marker = MapMarker(lat=self.lat, lon=self.lng, source="marker-3.png")
             mapview.add_widget(self.marker)
             #mapview.add_marker(lat=lat, lon=lng)
         except Exception as e:
@@ -166,7 +262,7 @@ class MyLayout(Screen):
         scaler = joblib.load('std_rev1.bin')
         model = joblib.load('estimasi_rev1.pkl')
 
-        self.origin = (-2.01234699405899,29.377851313693) 
+        self.origin = (-7.289980, 112.793715) 
         #destinationinput = urllib.parse.quote(userinput)
         #print(destinationinput)
         placeid_destination = userinput
@@ -265,9 +361,182 @@ class MyLayout(Screen):
             self.popup.open()
         except Exception as e:
             print('recommendation error :',str(e) )
+
+
+
+class MDDialog(MDDialog):
     
+    def __init__(self, **kwargs):
+        super(MDDialog, self).__init__(**kwargs)
+        # call dismiss_popup in 2 seconds
+        Clock.schedule_once(self.dismiss_popup, 5)
+
+    def dismiss_popup(self, *args):
+        self.dismiss()
     
+ 
+
+class LineMapLayer(MapLayer):
+    def __init__(self,lat,lng, **kwargs):
+        super(LineMapLayer, self).__init__(**kwargs)
+        #self.zoom = 16
+
+        url = "https://api.openrouteservice.org/v2/directions/driving-car?&api_key=5b3ce3597851110001cf6248fee30172e1284561af50061b93def79c"
+
+        #testing Dummies
+        #-7.289612, 112.796190
+        start = "&start=112.796190,-7.289612" 
     
+        end = "&end="+str(lng)+","+str(lat)
+        #end = "&end=8.687872,49.420318"
+
+        #Real World Appliaction
+        # start = "&start=" + str(startLat) + "," + str(startLng)
+        # end = "&end=" + str(endLat) + "," + str(endLng)
+
+        final = url + start + end
+        payload={}
+        headers = {
+        'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
+        }
+
+        response = requests.request("GET", final, headers=headers, data=payload)
+        hasil = json.loads(response.text)
+        polyCoordinates = hasil['features'][0]['geometry']['coordinates']
+
+
+        self._coordinates = [[polyCoordinates[0][1], polyCoordinates[0][0]]]
+        for i in range(1, len(polyCoordinates)):
+            # self.points =polyCoordinates[i-1], polyCoordinates[i]
+            self.points =(polyCoordinates[i][1], polyCoordinates[i][0])
+            self._coordinates.append(self.points)
+        self._line_points = None
+        self._line_points_offset = (0, 0)
+        self.zoom = 0
+    
+        
+        # geo_dover   = [51.126251, 1.327067]
+        # geo_calais  = [50.959086, 1.827652]
+        
+        # # NOTE: Points must be valid as they're no longer clamped
+        # self.coordinates = [geo_dover, geo_calais]
+        # for i in range(25000-2):
+        #     self.coordinates.append(self.gen_point())
+    @property
+    def coordinates(self):
+        return self._coordinates
+    @coordinates.setter
+    def coordinates(self, coordinates):
+        self._coordinates = coordinates
+        self.invalidate_line_points()
+        self.clear_and_redraw()
+
+    @property
+    def line_points(self):
+        if self._line_points is None:
+            self.calc_line_points()
+        return self._line_points
+
+    @property
+    def line_points_offset(self):
+        if self._line_points is None:
+            self.calc_line_points()
+        return self._line_points_offset
+    @property
+    def line_points_offset(self):
+        if self._line_points is None:
+            self.calc_line_points()
+        return self._line_points_offset
+    def calc_line_points(self):
+        # Offset all points by the coordinates of the first point, to keep coordinates closer to zero.
+        # (and therefore avoid some float precision issues when drawing lines)
+        self._line_points_offset = (self.get_x(self.coordinates[0][1]), self.get_y(self.coordinates[0][0]))
+        # Since lat is not a linear transform we must compute manually
+        self._line_points = [(self.get_x(lon) - self._line_points_offset[0], self.get_y(lat) - self._line_points_offset[1]) for lat, lon in self.coordinates]
+
+
+
+    def invalidate_line_points(self):
+        self._line_points = None
+        self._line_points_offset = (0, 0)
+        
+    def get_x(self, lon):
+        """Get the x position on the map using this map source's projection
+        (0, 0) is located at the top left.
+        """
+        return clamp(lon, MIN_LONGITUDE, MAX_LONGITUDE) *self.ms /360.
+ 
+    def get_y(self, lat):
+        """Get the y position on the map using this map source's projection
+        (0, 0) is located at the top left.
+        """
+        lat = radians(clamp(-lat, MIN_LATITUDE, MAX_LATITUDE))
+        return ((1.0 - log(tan(lat) + 1.0 / cos(lat)) / pi )) *self.ms /2.0
+    
+    def reposition(self):
+        mapview = self.parent
+
+        # Must redraw when the zoom changes
+        # as the scatter transform resets for the new tiles
+        if (self.zoom != mapview.zoom):
+            map_source = mapview.map_source
+            self.ms = pow(2.0, mapview.zoom) * map_source.dp_tile_size
+            self.invalidate_line_points()
+            self.clear_and_redraw()
+
+    def clear_and_redraw(self, *args):
+        with self.canvas:
+            # Clear old line
+            self.canvas.clear()
+
+        # FIXME: Why is 0.05 a good value here? Why does 0 leave us with weird offsets?
+        Clock.schedule_once(self._draw_line, 0.05)   
+    def _draw_line(self, *args):
+        mapview = self.parent
+        self.zoom = mapview.zoom
+       
+        # When zooming we must undo the current scatter transform
+        # or the animation distorts it
+        scatter = mapview._scatter
+        sx,sy,ss = scatter.x, scatter.y, scatter.scale
+        vx,vy,vs = mapview.viewport_pos[0], mapview.viewport_pos[1], mapview.scale
+        
+        # Account for map source tile size and mapview zoom
+        
+        #: Since lat is not a linear transform we must compute manually 
+        line_points = []
+        for lat,lon in self.coordinates:
+            line_points.extend((self.get_x(lon),self.get_y(lat)))
+            #line_points.extend(mapview.get_window_xy_from(lat,lon,mapview.zoom))
+        
+         
+        with self.canvas:
+            # Clear old line
+            self.canvas.clear()
+            
+            # Undo the scatter animation transform
+            Translate(*mapview.pos)
+            Scale(1/ss,1/ss,1)
+            Translate(-sx,-sy)
+            
+            # Apply the get window xy from transforms
+            Scale(vs,vs,1)
+            Translate(-vx,-vy)
+               
+            # Apply the what we can factor out of the mapsource long, lat to x, y conversion
+            Translate(self.ms / 2, 0)
+
+            # Translate by the offset of the line points (this keeps the points closer to the origin)
+            Translate(*self.line_points_offset)
+
+             
+            # Draw new
+            Color(31/255,146/255,161/255,1 )
+            Line(points=self.line_points, width=6.5/2)#4/ms)#6., joint="round",joint_precision=100)
+            Color(146/255,218/255,241/255,1)
+            Line(points=self.line_points, width=4 / 2)
+            
+
        
 class NavBar(FakeRectangularElevationBehavior, MDFloatLayout):
     
@@ -291,99 +560,6 @@ class NavBar(FakeRectangularElevationBehavior, MDFloatLayout):
 
 #     def dismiss_popup(self, dt):
 #         self.dismiss()
-
-class Gesits(MDApp):
-    sw_started= False
-    sw_seconds = 0
-    val = ""
-    tuj = ""
-    def update_time(self, nap):
-        if self.sw_started:
-            self.sw_seconds += nap
-        #tambah detik = :%S
-        #self.root.ids.SOC_value.text = "blok"
-        self.root.ids.time.text = strftime('[b]%H[/b]:%M')
-        #self.root.ids.recommendation.text = "test1"
-        SOC = 2
-        SOC_value = round((SOC/3)*100, 1)
-        SOC_value = str(SOC_value)+"%"
-        #displayAvailableNetworks()
-        f = open('con-log.json')
-        file = json.load(f)
-        tujuan = file['address']['tujuan']
-        wifiID = file['connection']['wifiID']
-        password = file['connection']['password']
-        #print (tujuan)
-        if len(wifiID) == 0:
-            if len(tujuan) == 0:
-                pass
-            else:
-                if self.tuj != tujuan:
-                    try:
-                        #fungsi tujuan
-                        try:
-                            self.root.ids.mapview.remove_widget(self.root.marker)
-                        except Exception as e:
-                            print('marker error :',str(e) )
-                        try:
-                            self.root.estimasi(tujuan, SOC_value)
-                        except Exception as e:
-                            print('estimation error :',str(e) )
-                            
-                        self.root.center_maps()
-                        self.root.ids.screendget_mini.switch_to(self.root.ids.s_mini2)
-                        self.root.ids.screendget.switch_to(self.root.ids.test2)
-                        self.root.ids.menubar_left.switch_to(self.root.ids.menubar_leftTop2)
-                        self.tuj = tujuan
-                        print("selesai")
-                    except Exception as e:
-                        print('function error :',str(e) )
-                else:
-                    pass
-        else:
-            if len(password) == 0:
-                pass
-            else:
-                #code disini
-                if self.val != wifiID:
-                    try:
-                        self.root.connect(wifiID, password)
-                        self.val = wifiID
-                        #test = sub.out
-                    except:
-                        print("gagal untuk menyambungkan")
-                        pass
-                else:
-                    pass
-                    #else:
-                    #    print ("koneksi sukses")
-    
-
-    def build(self):
-        #self.theme_cls.accent_color = "Green"
-        self.theme_cls.theme_style = "Dark"
-        #self.theme_cls.primary_palette = "BlueGray"
-        #self.theme_cls.primary_hue = "800" 
-        self.theme_cls.primary_palette = "Red"
-        self.theme_cls.primary_hue = "500" 
-        return MyLayout()
-
-    def on_start(self):
-        
-        self.sub1 = Clock.schedule_interval(self.update_time, 5)
-
-        speed = 47
-        self.root.ids.rpm.value = speed
-        speed_value = "%s km/h" %(str(speed))
-        self.root.ids.speed_value.text = speed_value
-        print(speed_value)
-        
-        SOC = 2
-        SOC_value = round((SOC/3)*100, 1)
-        SOC_value = str(SOC_value)+"%"
-        self.root.ids.SOC_value.text = SOC_value
-        print(SOC_value)
-        print(Clock.max_iteration)
         
 
 #MyLayout.estimasi.has_been_called = False
