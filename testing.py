@@ -26,7 +26,7 @@ def sub(command):
     print ("program output : ", out)
     print ("error : ",err)
     return out
-
+#ChIJd9BCGUf51y0RR2D7jmxJkJg
 # def destination_input(destinationinput):
 #     MyLayout.estimasi(destinationinput)
 val = ""

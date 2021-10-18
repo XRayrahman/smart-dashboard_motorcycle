@@ -1,5 +1,6 @@
 from logging import root
 from kivymd.app import MDApp
+import os
 #from kivy.uix.label import Label
 from kivy.animation import Animation
 from kivy.factory import Factory
@@ -21,6 +22,7 @@ import requests
 #import smtplib
 import googlemaps
 import pandas as pd
+import numpy as np
 import joblib
 #import cefpython3 as cef
 import requests
@@ -56,7 +58,7 @@ from kivy.properties import (
     ObjectProperty,
     StringProperty,
 )
-Clock.max_iteration = 50
+#Clock.max_iteration = 50
 from kivy.base import ExceptionHandler, ExceptionManager
 
 #import rfcomm_server
@@ -71,6 +73,7 @@ class Gesits(MDApp):
     sw_seconds = 0
     val = ""
     tuj = ""
+    icon = 'marker-3.png'
     def update_time(self, nap):
         if self.sw_started:
             self.sw_seconds += nap
@@ -203,20 +206,27 @@ class MyLayout(Screen):
             mapview = self.ids.mapview
             self.lat = self.geolat_destination
             self.lng = self.geolng_destination
-            line = LineMapLayer(self.lat, self.lng)
+            line = LineMapLayer(self.lat, self.lng, self.OriginLat, self.OriginLng)
             mapview.add_layer(line, mode='scatter')
-            mapview.center_on(self.lat, self.lng)
+            mapview.center_on(self.OriginLat, self.OriginLng)
             #marker1 = MapMarkerPopup(lat=lat, lon=lng) 
 
         except Exception as e:
             print("error center map:", str(e))
 
         try:
-            self.marker = MapMarker(lat=self.lat, lon=self.lng, source="marker-3.png")
-            mapview.add_widget(self.marker)
+            self.marker_origin = MapMarker(lat=self.OriginLat, lon=self.OriginLng, source="marker-3.png")
+            self.marker_destination = MapMarker(lat=self.lat, lon=self.lng, source="marker-red.png")
+            mapview.add_widget(self.marker_origin)
+            mapview.add_widget(self.marker_destination)
+            Clock.schedule_once(self.zoom_maps, 10)
             #mapview.add_marker(lat=lat, lon=lng)
         except Exception as e:
             print("error marker map:", str(e))
+    
+    def zoom_maps(self, *args):
+        mapview = self.ids.mapview
+        mapview.zoom = 15
         
     def move_speed(self):
         self.ids.screendget.switch_to(self.ids.test1)
@@ -245,29 +255,23 @@ class MyLayout(Screen):
         self.ids.screendget_mini.switch_to(self.ids.s_mini1)
 
     def estimasi(self, userinput, SOC_value):
-        #as_been_called = False
         lay = MyLayout()
         #path_to_kv_file = "test.kv"
-        
-        #alamat = pd.read_csv('data.csv')
-
         
         API_file = open("api-key.txt","r")
         API_key = API_file.read()
         API_file.close()
         #gmaps = googlemaps.Client(key=API_key)
         
-        #random_number = StringProperty()
-        
         scaler = joblib.load('std_rev1.bin')
         model = joblib.load('estimasi_rev1.pkl')
 
         self.origin = (-7.289980, 112.793715) 
+        self.OriginLat = -7.289980
+        self.OriginLng = 112.793715
         #destinationinput = urllib.parse.quote(userinput)
         #print(destinationinput)
         placeid_destination = userinput
-        
-        
         
         try:
             placeID_Destination_URL = "https://maps.googleapis.com/maps/api/place/details/json?place_id="+placeid_destination+"&key=AIzaSyCFIna2ndU8cxZRJN0FfH9KqvlOSvDzTDw&fields=geometry"
@@ -306,6 +310,18 @@ class MyLayout(Screen):
             DtimeEst = distanceJSON['rows'][0]['elements'][0]['duration']['text']
             self.ids.DummyDistance.text = Ddistance
             self.ids.DummyTimeEst.text = DtimeEst
+            Tdestination = distanceJSON['destination_addresses'][0]
+            Tdestination = Tdestination.split(",")
+            Tdestination = Tdestination[0:2]
+            Tdestination = ','.join(Tdestination)
+            Torigin = distanceJSON['origin_addresses'][0]
+            Torigin = Torigin.split(",")
+            Torigin = Torigin[0:2]
+            Torigin = ','.join(Torigin)
+            self.ids.label_bottom_dest.text = Tdestination
+            self.ids.label_bottom_ori.text = Torigin
+            # self.ids.right_icon.icon = "arrow-right"
+            #arrow-right-thin-circle-outline
             TrueDistance = Tdistance/1000
             print(TrueDistance)
         except Exception as e:
@@ -355,7 +371,7 @@ class MyLayout(Screen):
 
         try:
             self.popup = MDDialog(title='Tersambung',
-                        radius=[20, 7, 20, 7],
+                        radius=[7, 7, 20, 7],
                         md_bg_color=(244/255,67/255,54/255,1),
                         size_hint=(None, None), size=(400, 400))
             self.popup.open()
@@ -373,11 +389,12 @@ class MDDialog(MDDialog):
 
     def dismiss_popup(self, *args):
         self.dismiss()
+        
     
  
 
 class LineMapLayer(MapLayer):
-    def __init__(self,lat,lng, **kwargs):
+    def __init__(self,lat,lng,OriginLat,OriginLng, **kwargs):
         super(LineMapLayer, self).__init__(**kwargs)
         #self.zoom = 16
 
@@ -385,8 +402,8 @@ class LineMapLayer(MapLayer):
 
         #testing Dummies
         #-7.289612, 112.796190
-        start = "&start=112.796190,-7.289612" 
-    
+        #start = "&start=112.796190,-7.289612" 
+        start = "&start="+str(OriginLng)+","+str(OriginLat)
         end = "&end="+str(lng)+","+str(lat)
         #end = "&end=8.687872,49.420318"
 
@@ -566,7 +583,7 @@ class NavBar(FakeRectangularElevationBehavior, MDFloatLayout):
 lay = MyLayout()
 blu = Popen("python3 rfcomm_server.py", shell=True);
 Gesits().run()
-
+os.system("killall python3")
 
 ##ifi = Popen("python3 testing.py", shell=True);
 #stdout = blu.communicate()
