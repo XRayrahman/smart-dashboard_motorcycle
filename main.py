@@ -292,7 +292,7 @@ class MyLayout(Screen):
         except Exception as e:
             print('INVALID REQUEST DESTINATION',str(e))
 
-        Distancematrix_URL = "https://maps.googleapis.com/maps/api/distancematrix/json?mode=driving&key="+API_key+"&destinations=place_id:"+placeid_destination+"&origins=sukolilo&key=AIzaSyCFIna2ndU8cxZRJN0FfH9KqvlOSvDzTDw"
+        Distancematrix_URL = "https://maps.googleapis.com/maps/api/distancematrix/json?mode=driving&key="+API_key+"&destinations=place_id:"+placeid_destination+"&origins=sukolilo"
         #-- Parameter Tambahan --
         #&units=metric&traffic_model=pessimistic
         #------------------------
@@ -510,6 +510,7 @@ class LineMapLayer(MapLayer):
         Clock.schedule_once(self._draw_line, 0.05)   
     def _draw_line(self, *args):
         mapview = self.parent
+        self.zoom = 10
         self.zoom = mapview.zoom
        
         # When zooming we must undo the current scatter transform

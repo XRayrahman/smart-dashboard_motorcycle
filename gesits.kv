@@ -49,7 +49,7 @@
 <Progress>
     MDDialog:
         title:'Tersambung'
-        radius:[20, 7, 20, 7],
+        radius:[7, 7, 7, 7],
         md_bg_color:244/255,67/255,54/255,1
         size_hint:None, None
         size:400, 400
@@ -390,7 +390,7 @@
                                         padding:"7dp"
                                         canvas:
                                             Color:
-                                                rgba:(23/255,28/255,35/255,1  )
+                                                rgba:(244/255,67/255,54/255,1)
                                             RoundedRectangle:
                                                 size: self.size
                                                 pos: self.pos
@@ -399,7 +399,7 @@
                                             text:""
                                             size_hint:1,1
                                             font_size:"15sp"
-                                            pos_hint: {"x":.1}
+                                            pos_hint: {"center_x":0.27}
                                         BoxLayout:
                                             orientation: 'horizontal'
                                             MDIconButton:
@@ -477,6 +477,9 @@
                             MDIconButton:
                                 icon: "battery-medium"
                                 user_font_size: "50sp"
+                        #Rotate:
+                        #    angle: 45
+                        #    origin: self.center
 
                                 theme_text_color: "Custom"
                                 text_color: app.theme_cls.primary_color
