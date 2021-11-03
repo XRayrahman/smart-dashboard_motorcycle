@@ -1,6 +1,7 @@
 from logging import root
 from kivymd.app import MDApp
 import os
+os.environ["KIVY_TEXT"] = "pil"
 #from kivy.uix.label import Label
 from kivy.animation import Animation
 from kivy.factory import Factory
@@ -32,11 +33,11 @@ from datetime import datetime
 from time import strftime
 from math import *
 import time
-from kivy.clock import Clock
 import urllib
 import subprocess
 from subprocess import Popen, PIPE, STDOUT
 #import asyncio
+from kivy.clock import Clock
 from kivy.graphics import Color, Line, SmoothLine, MatrixInstruction
 from kivy.graphics.context_instructions import Translate, Scale
 from kivy_garden.speedmeter import SpeedMeter
@@ -60,13 +61,17 @@ from kivy.properties import (
 )
 #Clock.max_iteration = 50
 from kivy.base import ExceptionHandler, ExceptionManager
-
+from kivy.config import Config
+Config.set('graphics', 'width', '800')
+Config.set('graphics', 'height', '480')
+Config.write()
 #import rfcomm_server
 #from kivy.garden.cefpython import CEFBrowser
 
 #Window.borderless = True
+
 #Window.fullscreen = True
-#Window.maximize()
+# Window.maximize()
 
 class Gesits(MDApp):
     sw_started= False
@@ -111,6 +116,8 @@ class Gesits(MDApp):
                         self.root.ids.screendget_mini.switch_to(self.root.ids.s_mini2)
                         self.root.ids.screendget.switch_to(self.root.ids.test2)
                         self.root.ids.menubar_left.switch_to(self.root.ids.menubar_leftTop2)
+                        self.root.ids.mode_label.text = "JARAK"
+                        self.root.ids.suhu_label.text = "WAKTU TEMPUH"
                         self.tuj = tujuan
                         print("selesai")
                     except Exception as e:
@@ -150,17 +157,25 @@ class Gesits(MDApp):
         self.sub1 = Clock.schedule_interval(self.update_time, 5)
 
         speed = 47
-        self.root.ids.rpm.value = speed
+        self.root.ids.speed_bar.value = speed
+        speeds = str(speed)
+        self.root.ids.speed_bar_value.text = speeds
         speed_value = "%s km/h" %(str(speed))
         self.root.ids.speed_value.text = speed_value
         print(speed_value)
         
+        #baca tegangan
+        # with open('file.txt')
+
         SOC = 2
+        self.root.ids.SOC_bar.value = SOC
         SOC_value = round((SOC/3)*100, 1)
         SOC_value = str(SOC_value)+"%"
         self.root.ids.SOC_value.text = SOC_value
+        self.root.ids.SOC_bar_value.text = SOC_value
         print(SOC_value)
         print(Clock.max_iteration)
+
 class MyLayout(Screen):
 
     #def Popup_open():
@@ -257,8 +272,9 @@ class MyLayout(Screen):
     def estimasi(self, userinput, SOC_value):
         lay = MyLayout()
         #path_to_kv_file = "test.kv"
-        
-        API_file = open("api-key.txt","r")
+        path = "/home/owner/Enviro/app/gesits-system/.key/api-key.txt"
+        API_file = open(path,"r")
+        print(API_file)
         API_key = API_file.read()
         API_file.close()
         #gmaps = googlemaps.Client(key=API_key)
@@ -274,7 +290,7 @@ class MyLayout(Screen):
         placeid_destination = userinput
         
         try:
-            placeID_Destination_URL = "https://maps.googleapis.com/maps/api/place/details/json?place_id="+placeid_destination+"&key=AIzaSyCFIna2ndU8cxZRJN0FfH9KqvlOSvDzTDw&fields=geometry"
+            placeID_Destination_URL = "https://maps.googleapis.com/maps/api/place/details/json?	place_id="+placeid_destination+"&key=AIzaSyBxidFA-DVnYjtl9DSNnaVJ3EaOHdY7i50&fields=geometry"
         except Exception as e:
             print('INVALID URL',str(e))
         payload={}
@@ -366,8 +382,11 @@ class MyLayout(Screen):
         except Exception as e:
             print('estimation error ni :',str(e) )
 
-        #try:
-        self.ids.recommendation.text = "ECO          :  %s\n\nNORMAL  :  %s\n\nSPORT     :  %s" %(estimasi_eco, estimasi_normal, estimasi_sport)
+        # tiga rekomendasi
+        # self.ids.recommendation.text = "ECO          :  %s\n\nNORMAL  :  %s\n\nSPORT     :  %s" %(estimasi_eco, estimasi_normal, estimasi_sport)
+
+        # satu rekomendasi
+        self.ids.recommendation.text = estimasi_normal
 
         try:
             self.popup = MDDialog(title='Tersambung',
@@ -510,7 +529,7 @@ class LineMapLayer(MapLayer):
         Clock.schedule_once(self._draw_line, 0.05)   
     def _draw_line(self, *args):
         mapview = self.parent
-        self.zoom = 10
+        self.zoom = 12
         self.zoom = mapview.zoom
        
         # When zooming we must undo the current scatter transform
