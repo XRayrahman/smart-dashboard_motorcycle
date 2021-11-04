@@ -86,8 +86,8 @@ class Gesits(MDApp):
         #self.root.ids.SOC_value.text = "blok"
         self.root.ids.time.text = strftime('[b]%H[/b]:%M')
         #self.root.ids.recommendation.text = "test1"
-        SOC = 2
-        SOC_value = round((SOC/3)*100, 1)
+        
+        SOC_value = round((self.SOC/3)*100, 1)
         SOC_value = str(SOC_value)+"%"
         #displayAvailableNetworks()
         f = open('con-log.json')
@@ -117,7 +117,8 @@ class Gesits(MDApp):
                         self.root.ids.screendget.switch_to(self.root.ids.test2)
                         self.root.ids.menubar_left.switch_to(self.root.ids.menubar_leftTop2)
                         self.root.ids.mode_label.text = "JARAK"
-                        self.root.ids.suhu_label.text = "WAKTU TEMPUH"
+                        self.root.ids.suhu_label.text = "WAKTU"
+                        self.root.ids.card_label.text = "REKOMENDASI"
                         self.tuj = tujuan
                         print("selesai")
                     except Exception as e:
@@ -154,7 +155,6 @@ class Gesits(MDApp):
 
     def on_start(self):
         
-        self.sub1 = Clock.schedule_interval(self.update_time, 5)
 
         speed = 47
         self.root.ids.speed_bar.value = speed
@@ -168,13 +168,17 @@ class Gesits(MDApp):
         # with open('file.txt')
 
         SOC = 2
+        self.SOC = SOC
         self.root.ids.SOC_bar.value = SOC
+        SOC_text = "TEGANGAN : "+str(SOC)+" V"
+        self.root.ids.tegangan_value_text.text = SOC_text
         SOC_value = round((SOC/3)*100, 1)
         SOC_value = str(SOC_value)+"%"
         self.root.ids.SOC_value.text = SOC_value
         self.root.ids.SOC_bar_value.text = SOC_value
         print(SOC_value)
         print(Clock.max_iteration)
+        self.sub1 = Clock.schedule_interval(self.update_time, 5)
 
 class MyLayout(Screen):
 
@@ -272,7 +276,7 @@ class MyLayout(Screen):
     def estimasi(self, userinput, SOC_value):
         lay = MyLayout()
         #path_to_kv_file = "test.kv"
-        path = "/home/owner/Enviro/app/gesits-system/.key/api-key.txt"
+        path = "/home/raizen/Enviro_kv/app/gesits-system/.key/api-key.txt"
         API_file = open(path,"r")
         print(API_file)
         API_key = API_file.read()
@@ -328,14 +332,14 @@ class MyLayout(Screen):
             self.ids.DummyTimeEst.text = DtimeEst
             Tdestination = distanceJSON['destination_addresses'][0]
             Tdestination = Tdestination.split(",")
-            Tdestination = Tdestination[0:2]
+            Tdestination = Tdestination[0:1]
             Tdestination = ','.join(Tdestination)
             Torigin = distanceJSON['origin_addresses'][0]
             Torigin = Torigin.split(",")
             Torigin = Torigin[0:2]
             Torigin = ','.join(Torigin)
-            self.ids.label_bottom_dest.text = Tdestination
-            self.ids.label_bottom_ori.text = Torigin
+            self.ids.lokasi_label.text = "ASAL        :  %s\nTUJUAN   :  %s" %(Torigin,Tdestination)
+            # self.ids.label_bottom_ori.text = Torigin
             # self.ids.right_icon.icon = "arrow-right"
             #arrow-right-thin-circle-outline
             TrueDistance = Tdistance/1000

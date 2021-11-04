@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import bluetooth
+# from bluetooth import native_socket
 import json
 import os
 import time
@@ -7,6 +8,7 @@ import time
 print("START")
 #os.system("print(Waiting for connection)")
 os.system("sudo sdptool add sp")
+os.system("sudo hciconfig hci0 reset")
 os.system("sudo hciconfig hci0 piscan")
 server_sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
 server_sock.bind(("", bluetooth.PORT_ANY))

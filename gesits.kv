@@ -69,7 +69,7 @@
     padding:"25dp"
     canvas:
         Color:
-            rgba:(23/255,28/255,35/255,1  )
+            rgba:(23/255,28/255,35/255,1)
             #rgba:(14/255,11/255,30/255,1)
         RoundedRectangle:
             size: self.size
@@ -206,34 +206,23 @@
                                 orientation: 'vertical'
                                 size_hint_y: 1
                                 spacing:"10dp"
-                                canvas:
-                                    Color:
-                                        rgba:(5/255,2/255,21/255,1)
-                                BoxLayout:
-                                    orientation: 'vertical'
-                                    size_hint_y: .1
-                                    canvas:
-                                        Color:
-                                            rgba:(1,1,1,1)
-                                    Label_roboto:
-                                        id: recommendation_label
-                                        text:"REKOMENDASI"
-                                        #theme_text_color: "Custom"
-                                        #text_color: app.theme_cls.primary_color
-                                        halign: "center"
-                                        font_size: "20sp"
-                                        pos_hint: {"center_x": 0.5}
-                                        #text_size: self.size
-                                        #size_hint:1,0.1
 
+                                Label_roboto:
+                                    # id: label_bottom_ori
+                                    text:"Dengan estimasi\nkecepatan 50 km/h :"
+                                    size_hint:1,0.4
+                                    font_size:"12sp"
+                                    halign:"left"
+                                    color:(1,1,1,1)
                                 Label_roboto:
                                     id: recommendation
                                     text:""
                                     halign: "center"
+                                    valign: "center"
                                     text_size: self.size
-                                    size_hint:1,0.7
+                                    size_hint:1,.9
                                     # font_size: "12sp"
-                                    font_size: "24sp"
+                                    font_size: "28sp"
                                     bold: True
                                     color: 146/255,218/255,241/255,1
 
@@ -422,9 +411,11 @@
                                         zoom:12
                                         lat:-7.2575
                                         lon:112.7521
+                                        # center_on:(lat,lon)
+                                        
                                         #map_source: 'osm-hot'
                                         #map_source: MapSource.MapSource(url='https://tile.thunderforest.com/mobile-atlas/{z}/{x}/{y}.png?apikey=f872d70d2fa74f1c96049845e81a8a99', attribution='')
-                                        map_source: MapSource.MapSource(cache_key='cartodb-darkmatter', url='https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png?apikey=f872d70d2fa74f1c96049845e81a8a99', attribution="@OpenStreet Map")
+                                        map_source: MapSource.MapSource(cache_key='cartodb-darkmatter', url='https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png?apikey=f872d70d2fa74f1c96049845e81a8a99', attribution="@OpenStreet Map - DarkMatter")
                                         #https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png
                                         #cache_key='cartodb-darkmatter'
                                         marker:
@@ -460,38 +451,48 @@
                                     size_hint:1,1
                                     BoxLayout:
                                         orientation: "vertical"
-                                        pos_hint:{"top":.25,"x":.05}
+                                        pos_hint:{"top":.28,"right":.971}
                                         size_hint_y:.2
+                                        size_hint_x:.52
+                                        # size: lokasi_label.size
                                         padding:"7dp"
                                         canvas:
                                             Color:
-                                                rgba:(106/255,140/255,184/255,1)
+                                                rgba:(195/255,66/255,60/255,1)
                                             RoundedRectangle:
-                                                size: self.size
+                                                size: self.size 
                                                 pos: self.pos
-                                        Label_roboto:
-                                            id: label_bottom_ori
-                                            text:""
-                                            size_hint:0.8,1
-                                            font_size:"15sp"
-                                            # pos_hint: {"center_x":0.27}
-                                        Label_roboto:
-                                            text:"-----------------"
-                                            size_hint:0.8,1
-                                            font_size:"15sp"
+                                        BoxLayout:
+                                            orientation:"vertical"
+                                            Label_roboto:
+                                                id: lokasi_label
+                                                text:"SAMBUNGKAN INTERNET"
+                                                # size_hint:.5,1
+                                                size:self.size
+                                                font_size:"15sp"
+                                                halign:"left"
+                                                # pos_hint: {"center_x":0.27}
 
-                                        # BoxLayout:
-                                        #     orientation: 'horizontal'
-                                            # MDIconButton:
-                                            #     id: right_icon
-                                            #     icon: "arrow-right"
-                                            #     font_size: "5sp"
-                                            #     pos_hint:{"left": .5, "center_y": .5}
-                                        Label_roboto:
-                                            id: label_bottom_dest
-                                            text:"ESTIMASI ERROR, SAMBUNGKAN INTERNET"
-                                            size_hint:0.8,1
-                                            font_size:"15sp"
+                                            # Label_roboto:
+                                            #     text:"--------------------------"
+                                            #     size_hint:1,1
+                                            #     font_size:"15sp"
+                                            #     halign:"left"
+
+                                            # BoxLayout:
+                                            #     orientation: 'horizontal'
+                                                # MDIconButton:
+                                                #     id: right_icon
+                                                #     icon: "arrow-right"
+                                                #     font_size: "5sp"
+                                                #     pos_hint:{"left": .5, "center_y": .5}
+
+                                            # Label_roboto:
+                                            #     id: label_bottom_dest
+                                            #     text:"ERROR, SAMBUNGKAN INTERNET"
+                                            #     size_hint:1,1
+                                            #     font_size:"15sp"
+                                            #     halign:"left"
                                     ##pos_hint: {"x": .1, "top": .1}
 
                             # Screen:
@@ -657,11 +658,27 @@
                 font_size:"12sp"
                 pos_hint: {"center_x":0.27}
                 color:(0,0,0,1)
+                
     FloatLayout:
         size_hint:1,1
         PilLayout:
             orientation: "horizontal"
-            pos_hint:{"top":.06,"x":.36}
+            pos_hint:{"top":.268,"x":.49}
+            size_hint: 0.2, 0.04
+            Label_roboto:
+                # id: label_bottom_ori
+                text:"DASHBOARD"
+                size_hint:1,1
+                font_size:"12sp"
+                pos_hint: {"center_x":0.5}
+                color:(0,0,0,1)
+
+    FloatLayout:
+        size_hint:1,1
+        PilLayout:
+            orientation: "horizontal"
+            # pos_hint:{"top":.058,"x":.36}
+            pos_hint:{"top":.058,"x":.27}
             Label_roboto:
                 # id: label_bottom_ori
                 text:"BATTERY"
@@ -670,12 +687,32 @@
                 pos_hint: {"center_x":0.27}
                 color:(0,0,0,1)
 
+    FloatLayout:
+        size_hint:1,1
+        PilLayout:
+            orientation: "horizontal"
+            pos_hint:{"top":.058,"x":.395}
+            size_hint_x: 0.15
+            canvas:
+                Color:
+                    rgba:(93/255,140/255,156/255,1)
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+            Label_roboto:
+                id: tegangan_value_text
+                text:"tegangan :"
+                size_hint:1,1
+                font_size:"12sp"
+                halign:"left"
+                color:(0,0,0,1)
+
 
     FloatLayout:
         size_hint:1,1
         PilLayout:
             orientation: "horizontal"
-            pos_hint:{"top":.06,"x":.74}
+            pos_hint:{"top":.058,"x":.74}
             Label_roboto:
                 # id: label_bottom_ori
                 text:"VEHICLE"
@@ -685,47 +722,63 @@
                 color:(0,0,0,1)
 
     FloatLayout:
-        orientation: "horizontal"
-        size_hint: 1,1
-        #spacing:"30dp"
-        #padding:"5dp"
-        pos_hint: {"top": .2, "right": 1}
+        size_hint:1,1
+        PilLayout:
+            orientation: "horizontal"
+            pos_hint:{"top":.263,"x":.0475}
+            size_hint: 0.15, 0.04
+            Label_roboto:
+                id: card_label
+                text:"APLIKASI"
+                size_hint:1,1
+                font_size:"12sp"
+                pos_hint: {"center_x":0.27}
+                color:(0,0,0,1)
 
-        #canvas:
-        #    Color:
-        #        rgba:(5/255,2/255,21/255,1)
-        #    RoundedRectangle:
-        #        size: self.size
-        #        pos: self.pos
-        NavBar:
-            size_hint: .75,.9
-            pos_hint: {"right":1}
-            spacing:"10dp"
-            padding:"10dp"
-            #elevation: 10
-            #md_bg_color: 5/255,2/255,21/255,1
-            #radius: [10]
-            MDGridLayout:
-                cols: 3
-                size_hint: .9,1
-                spacing: 5
-                pos_hint: {"center_x": .5, "center_y": .5}
-                On_active_button:
-                    id: nav_icon1
-                    icon: "google-maps"
-                    text: "Maps"
-                    ripple_scale: 0
-                    font_size: "30sp"
-                    on_press: root.move_maps()
-                On_active_button:
-                    id: nav_icon2
-                    icon: "speedometer"
-                    text: "Speed"
-                    ripple_scale: 0
-                    font_size: "30sp"
-                    on_release: root.move_speed()
-                    on_release: root.move_s_mini1()
-                    on_release: root.move_menubar_left1()
+    # FloatLayout:
+    #     orientation: "horizontal"
+    #     size_hint: 1,1
+    #     #spacing:"30dp"
+    #     #padding:"5dp"
+    #     pos_hint: {"top": .2, "right": 1}
+
+    #     #canvas:
+    #     #    Color:
+    #     #        rgba:(5/255,2/255,21/255,1)
+    #     #    RoundedRectangle:
+    #     #        size: self.size
+    #     #        pos: self.pos
+    #     NavBar:
+    #         size_hint: .75,.9
+    #         pos_hint: {"right":1}
+    #         spacing:"10dp"
+    #         padding:"10dp"
+    #         #elevation: 10
+    #         #md_bg_color: 5/255,2/255,21/255,1
+    #         #radius: [10]
+    #         MDGridLayout:
+    #             cols: 3
+    #             size_hint: .9,1
+    #             spacing: 5
+    #             pos_hint: {"center_x": .5, "center_y": .5}
+    #             On_active_button:
+    #                 id: nav_icon1
+    #                 # icon: "google-maps"
+    #                 text: "Maps"
+    #                 ripple_scale: 0
+    #                 font_size: "30sp"
+    #                 on_press: root.move_maps()
+    #             On_active_button:
+    #                 id: nav_icon2
+    #                 # icon: "speedometer"
+    #                 text: "Speed"
+    #                 ripple_scale: 0
+    #                 font_size: "30sp"
+    #                 on_release: root.move_speed()
+    #                 on_release: root.move_s_mini1()
+    #                 on_release: root.move_menubar_left1()
+                
+                
                 #On_active_button:
                 #    id: nav_icon3
                 #    icon: "math-integral"
