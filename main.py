@@ -70,7 +70,7 @@ Config.write()
 
 #Window.borderless = True
 
-#Window.fullscreen = True
+Window.fullscreen = True
 # Window.maximize()
 
 class Gesits(MDApp):
@@ -79,6 +79,36 @@ class Gesits(MDApp):
     val = ""
     tuj = ""
     icon = 'marker-3.png'
+
+    #update data, untuk sekarang hanya SOC
+    def update_data(self,nap):
+        if self.sw_started:
+            self.sw_seconds += nap
+
+        rt = open('datastore.json')
+        rtfile = json.load(rt)
+        tegangan = rtfile['tegangan']
+        if len(tegangan)== 0:
+            pass
+        else:
+            self.tegangan = tegangan
+            SOC_text = "TEGANGAN : "+str(tegangan)+" V"
+            self.root.ids.tegangan_value_text.text = SOC_text
+            valtegangan = float(tegangan)
+            if valtegangan >= 71:
+                SOC_value = round(90+((valtegangan-71)*10),1)
+            elif valtegangan <= 63:
+                SOC_value = round(30-((63-valtegangan)*.476),1)
+            else:
+                SOC_value = round(90-((71-valtegangan)*.11428),1)
+
+            # SOC_value = round((float(tegangan)/3)*100, 1)
+            self.root.ids.SOC_bar.value = SOC_value
+            self.SOC_value = str(SOC_value)+"%"
+            self.root.ids.SOC_value.text = self.SOC_value
+            self.root.ids.SOC_bar_value.text = self.SOC_value
+        
+
     def update_time(self, nap):
         if self.sw_started:
             self.sw_seconds += nap
@@ -86,9 +116,7 @@ class Gesits(MDApp):
         #self.root.ids.SOC_value.text = "blok"
         self.root.ids.time.text = strftime('[b]%H[/b]:%M')
         #self.root.ids.recommendation.text = "test1"
-        
-        SOC_value = round((self.SOC/3)*100, 1)
-        SOC_value = str(SOC_value)+"%"
+
         #displayAvailableNetworks()
         f = open('con-log.json')
         file = json.load(f)
@@ -108,7 +136,7 @@ class Gesits(MDApp):
                         except Exception as e:
                             print('marker error :',str(e) )
                         try:
-                            self.root.estimasi(tujuan, SOC_value)
+                            self.root.estimasi(tujuan, self.SOC_value)
                         except Exception as e:
                             print('estimation error :',str(e) )
                             
@@ -179,6 +207,7 @@ class Gesits(MDApp):
         print(SOC_value)
         print(Clock.max_iteration)
         self.sub1 = Clock.schedule_interval(self.update_time, 5)
+        self.sub2 = Clock.schedule_interval(self.update_data, 1)
 
 class MyLayout(Screen):
 
@@ -605,9 +634,11 @@ class NavBar(FakeRectangularElevationBehavior, MDFloatLayout):
 
 #MyLayout.estimasi.has_been_called = False
 lay = MyLayout()
-blu = Popen("python3 rfcomm_server.py", shell=True);
+back1 = Popen("python read_tegangan.py", shell=True);
+blu = Popen("python rfcomm_server.py", shell=True);
 Gesits().run()
-os.system("killall python3")
+os.system("killall python")
+os.system("exit")
 
 ##ifi = Popen("python3 testing.py", shell=True);
 #stdout = blu.communicate()
