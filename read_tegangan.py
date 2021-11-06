@@ -10,6 +10,7 @@ ser = serial.Serial('/dev/ttyUSB0',9600, timeout = 5)
     
 # listen for the input, exit if nothing received in timeout period
 while True:
+    
     line = ser.readline()
     data = line.decode('utf-8')
     fldata = format(float(data), ".2f")
@@ -27,5 +28,5 @@ while True:
         print("Time out! Exit.\n")
         sys.exit()
     # print(format(float(data), ".2f"))
-    print(json_data)
+
    

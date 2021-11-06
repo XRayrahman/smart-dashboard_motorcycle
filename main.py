@@ -61,10 +61,10 @@ from kivy.properties import (
 )
 #Clock.max_iteration = 50
 from kivy.base import ExceptionHandler, ExceptionManager
-from kivy.config import Config
-Config.set('graphics', 'width', '800')
-Config.set('graphics', 'height', '480')
-Config.write()
+# from kivy.config import Config
+# Config.set('graphics', 'width', '800')
+# Config.set('graphics', 'height', '480')
+# Config.write()
 #import rfcomm_server
 #from kivy.garden.cefpython import CEFBrowser
 
@@ -82,12 +82,15 @@ class Gesits(MDApp):
 
     #update data, untuk sekarang hanya SOC
     def update_data(self,nap):
+        tegangan = 0
         if self.sw_started:
             self.sw_seconds += nap
-
-        rt = open('datastore.json')
-        rtfile = json.load(rt)
-        tegangan = rtfile['tegangan']
+        try :
+            rt = open('datastore.json')
+            rtfile = json.load(rt)
+            tegangan = rtfile['tegangan']
+        except Exception as e:
+            print('datavalue error :',str(e) )
         if len(tegangan)== 0:
             pass
         else:
