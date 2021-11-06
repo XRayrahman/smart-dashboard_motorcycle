@@ -305,7 +305,7 @@ class MyLayout(Screen):
     def estimasi(self, userinput, SOC_value):
         lay = MyLayout()
         #path_to_kv_file = "test.kv"
-        path = "/home/raizen/Enviro_kv/app/gesits-system/.key/api-key.txt"
+        path = "/home/owner/Enviro/app/gesits-system/.key/api-key.txt"
         API_file = open(path,"r")
         print(API_file)
         API_key = API_file.read()
@@ -323,7 +323,7 @@ class MyLayout(Screen):
         placeid_destination = userinput
         
         try:
-            placeID_Destination_URL = "https://maps.googleapis.com/maps/api/place/details/json?	place_id="+placeid_destination+"&key=AIzaSyBxidFA-DVnYjtl9DSNnaVJ3EaOHdY7i50&fields=geometry"
+            placeID_Destination_URL = "https://maps.googleapis.com/maps/api/place/details/json?place_id="+placeid_destination+"&key=AIzaSyBxidFA-DVnYjtl9DSNnaVJ3EaOHdY7i50&fields=geometry"
         except Exception as e:
             print('INVALID URL',str(e))
         payload={}
