@@ -1,7 +1,7 @@
 from logging import root
 from kivymd.app import MDApp
 import os
-os.environ["KIVY_TEXT"] = "pil"
+# os.environ["KIVY_TEXT"] = "pil"
 #from kivy.uix.label import Label
 from kivy.animation import Animation
 from kivy.factory import Factory
@@ -308,7 +308,8 @@ class MyLayout(Screen):
     def estimasi(self, userinput, SOC_value):
         lay = MyLayout()
         #path_to_kv_file = "test.kv"
-        path = "/home/owner/Enviro/app/gesits-system/.key/api-key.txt"
+        this_path = str(os.getcwd())
+        path = this_path+"/.key/api-key.txt"
         API_file = open(path,"r")
         print(API_file)
         API_key = API_file.read()
