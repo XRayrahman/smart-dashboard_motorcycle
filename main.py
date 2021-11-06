@@ -404,7 +404,7 @@ class MyLayout(Screen):
                     if x == eco:
                         estimasi_eco = "TIDAK"
                     elif x == normal:
-                        estimasi_normal = "TIDAK"
+                        estimasi_normal = "TIDAK\nCUKUP"
                     elif x == sport:
                         estimasi_sport = "TIDAK"
 
