@@ -70,7 +70,7 @@ from kivy.base import ExceptionHandler, ExceptionManager
 
 #Window.borderless = True
 
-Window.fullscreen = True
+# Window.fullscreen = True
 # Window.maximize()
 
 class Gesits(MDApp):
@@ -82,16 +82,17 @@ class Gesits(MDApp):
 
     #update data, untuk sekarang hanya SOC
     def update_data(self,nap):
-        tegangan = 0
+        tegangan = 0.00
         if self.sw_started:
             self.sw_seconds += nap
+
         try :
             rt = open('datastore.json')
             rtfile = json.load(rt)
             tegangan = rtfile['tegangan']
         except Exception as e:
             print('datavalue error :',str(e) )
-        if len(tegangan)== 0:
+        if tegangan== 0.00:
             pass
         else:
             self.tegangan = tegangan
