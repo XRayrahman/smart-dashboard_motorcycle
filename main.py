@@ -78,7 +78,7 @@ class Gesits(MDApp):
     sw_seconds = 0
     val = ""
     tuj = ""
-    icon = 'marker-3.png'
+    icon = 'logo.svg'
 
     #update data, untuk sekarang hanya SOC
     def update_data(self,nap):
@@ -186,7 +186,6 @@ class Gesits(MDApp):
 
     def on_start(self):
         
-
         speed = 47
         self.root.ids.speed_bar.value = speed
         speeds = str(speed)
@@ -194,7 +193,6 @@ class Gesits(MDApp):
         speed_value = "%s km/h" %(str(speed))
         self.root.ids.speed_value.text = speed_value
         print(speed_value)
-        
         #baca tegangan
         # with open('file.txt')
 
@@ -485,7 +483,7 @@ class LineMapLayer(MapLayer):
             self._coordinates.append(self.points)
         self._line_points = None
         self._line_points_offset = (0, 0)
-        self.zoom = 0
+        self.zoom = 10
     
         
         # geo_dover   = [51.126251, 1.327067]
@@ -606,7 +604,7 @@ class LineMapLayer(MapLayer):
              
             # Draw new
             Color(31/255,146/255,161/255,1 )
-            Line(points=self.line_points, width=6.5/2)#4/ms)#6., joint="round",joint_precision=100)
+            Line(points=self.line_points, width=6/2, joint="round")#4/ms)#6., joint="round",joint_precision=100)
             Color(146/255,218/255,241/255,1)
             Line(points=self.line_points, width=4 / 2)
             

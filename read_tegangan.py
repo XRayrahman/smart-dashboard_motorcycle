@@ -20,13 +20,14 @@ while True:
     tegangan_json = {
         "tegangan": fldata
     }
+
     if len(str(data)) != 0:
         file = "datastore.json"
         with open(file, 'w') as file_object:  #open the file in write mode
             json.dump(tegangan_json, file_object, indent=4)
     else:
         print("Time out! Exit.\n")
-        sys.exit()
+        pass
     # print(format(float(data), ".2f"))
 
    
