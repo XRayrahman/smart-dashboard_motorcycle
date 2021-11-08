@@ -97,7 +97,7 @@ class Gesits(MDApp):
     def on_start(self):
 
         self.root.ids.screen_manager.switch_to(self.root.ids.splashScreen)
-        self.subScreen = Clock.schedule_once(self.changeScreen,7)
+        self.subScreen = Clock.schedule_once(self.changeScreen,12)
         
         # self.root.ids.progress.value = 100;
         speed = 47
@@ -462,7 +462,7 @@ class MDDialog(MDDialog):
     def __init__(self, **kwargs):
         super(MDDialog, self).__init__(**kwargs)
         # call dismiss_popup in 2 seconds
-        Clock.schedule_once(self.dismiss_popup, 5)
+        Clock.schedule_once(self.dismiss_popup, 7)
 
     def dismiss_popup(self, *args):
         self.dismiss()
