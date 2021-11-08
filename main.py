@@ -70,7 +70,7 @@ from kivy.base import ExceptionHandler, ExceptionManager
 
 #Window.borderless = True
 # Window.size=(800,480)
-# Window.fullscreen = True
+Window.fullscreen = True
 # Window.maximize()
 
 class Gesits(MDApp):
@@ -97,7 +97,7 @@ class Gesits(MDApp):
     def on_start(self):
 
         self.root.ids.screen_manager.switch_to(self.root.ids.splashScreen)
-        self.subScreen = Clock.schedule_once(self.changeScreen,5)
+        self.subScreen = Clock.schedule_once(self.changeScreen,7)
         
         # self.root.ids.progress.value = 100;
         speed = 47
@@ -138,13 +138,13 @@ class Gesits(MDApp):
             rt = open('datastore.json')
             data = json.load(rt)
             tegangan = data['tegangan']
-            
+            kecepatan = data['kecepatan']
         except:
             pass
         # if tegangan == 0.00:
         #     pass
         # else:
-        self.tegangan = tegangan
+        # self.tegangan = tegangan
         SOC_text = "TEGANGAN : "+str(tegangan)+" V"
         self.root.ids.tegangan_value_text.text = SOC_text
         valtegangan = float(tegangan)
@@ -160,6 +160,13 @@ class Gesits(MDApp):
         self.SOC_value = str(SOC_value)+"%"
         self.root.ids.SOC_value.text = self.SOC_value
         self.root.ids.SOC_bar_value.text = self.SOC_value
+
+        #kecepatan
+        self.root.ids.speed_bar.value = float(kecepatan)
+        speeds = str(kecepatan)
+        self.root.ids.speed_bar_value.text = speeds
+        speed_value = "%s km/h" %(speeds)
+        self.root.ids.speed_value.text = speed_value
         
 
     def update_time(self, nap):
