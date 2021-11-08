@@ -17,19 +17,15 @@ while True:
         data = line.decode('utf-8')
         if (data[0]=='{') :
             data=json.loads(data)
-            print(data)
+            # print(data)
             # fldata = format(float(data), ".2f")
             # json_data = "tegangan: "+str(fldata)
             # data = json.loads(data)
         try:
             tegangan=data['tegangan']
-        except:
-            tegangan="0.00"
-            pass
-
-        try:
             kecepatan=data['rps']
         except:
+            tegangan="0.00"
             kecepatan="0.00"
             pass
 
@@ -42,6 +38,7 @@ while True:
             file = "datastore.json"
             with open(file, 'w') as file_object:  #open the file in write mode
                 json.dump(data_json, file_object, indent=4)
+            # print(data_json)
         else:
             print("Time out! Exit.\n")
             pass

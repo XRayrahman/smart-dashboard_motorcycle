@@ -97,6 +97,7 @@ class Gesits(MDApp):
     def on_start(self):
 
         self.root.ids.screen_manager.switch_to(self.root.ids.splashScreen)
+        self.subScreen = Clock.schedule_once(self.changeScreen,5)
         
         # self.root.ids.progress.value = 100;
         speed = 47
@@ -122,7 +123,6 @@ class Gesits(MDApp):
         print(Clock.max_iteration)
         self.sub1 = Clock.schedule_interval(self.update_time, 5)
         self.sub2 = Clock.schedule_interval(self.update_data, 1)
-        self.subScreen = Clock.schedule_once(self.changeScreen,5)
 
     def changeScreen(self,dt):
         self.root.ids.screen_manager.transition = RiseInTransition()
@@ -130,35 +130,36 @@ class Gesits(MDApp):
 
     #update data, untuk sekarang hanya SOC
     def update_data(self,nap):
-        tegangan = 0.00
+        # tegangan = 0.00
         if self.sw_started:
             self.sw_seconds += nap
 
         try :
             rt = open('datastore.json')
-            rtfile = json.load(rt)
-            tegangan = rtfile['tegangan']
+            data = json.load(rt)
+            tegangan = data['tegangan']
+            
         except:
             pass
-        if tegangan== 0.00:
-            pass
+        # if tegangan == 0.00:
+        #     pass
+        # else:
+        self.tegangan = tegangan
+        SOC_text = "TEGANGAN : "+str(tegangan)+" V"
+        self.root.ids.tegangan_value_text.text = SOC_text
+        valtegangan = float(tegangan)
+        if valtegangan >= 71:
+            SOC_value = round(90+((valtegangan-71)*10),1)
+        elif valtegangan <= 63:
+            SOC_value = round(30-((63-valtegangan)*.476),1)
         else:
-            self.tegangan = tegangan
-            SOC_text = "TEGANGAN : "+str(tegangan)+" V"
-            self.root.ids.tegangan_value_text.text = SOC_text
-            valtegangan = float(tegangan)
-            if valtegangan >= 71:
-                SOC_value = round(90+((valtegangan-71)*10),1)
-            elif valtegangan <= 63:
-                SOC_value = round(30-((63-valtegangan)*.476),1)
-            else:
-                SOC_value = round(90-((71-valtegangan)*.11428),1)
+            SOC_value = round(90-((71-valtegangan)*.11428),1)
 
-            # SOC_value = round((float(tegangan)/3)*100, 1)
-            self.root.ids.SOC_bar.value = SOC_value
-            self.SOC_value = str(SOC_value)+"%"
-            self.root.ids.SOC_value.text = self.SOC_value
-            self.root.ids.SOC_bar_value.text = self.SOC_value
+        # SOC_value = round((float(tegangan)/3)*100, 1)
+        self.root.ids.SOC_bar.value = SOC_value
+        self.SOC_value = str(SOC_value)+"%"
+        self.root.ids.SOC_value.text = self.SOC_value
+        self.root.ids.SOC_bar_value.text = self.SOC_value
         
 
     def update_time(self, nap):
