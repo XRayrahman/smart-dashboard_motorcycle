@@ -17,7 +17,7 @@ from kivymd.uix.list import OneLineListItem
 from kivymd.uix.dialog import MDDialog
 from kivy.lang import Builder
 #from kivy.uix.widget import Widget
-from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.screenmanager import RiseInTransition,FadeTransition, ScreenManager, Screen
 #from googlemaps import convert
 import requests
 #import smtplib
@@ -69,7 +69,7 @@ from kivy.base import ExceptionHandler, ExceptionManager
 #from kivy.garden.cefpython import CEFBrowser
 
 #Window.borderless = True
-
+# Window.size=(800,480)
 # Window.fullscreen = True
 # Window.maximize()
 
@@ -79,6 +79,54 @@ class Gesits(MDApp):
     val = ""
     tuj = ""
     icon = 'logo.svg'
+    global screen_manager
+    screen_manager = ScreenManager()
+
+    def build(self):
+        #self.theme_cls.accent_color = "Green"
+        self.theme_cls.theme_style = "Dark"
+        #self.theme_cls.primary_palette = "BlueGray"
+        #self.theme_cls.primary_hue = "800" 
+        self.theme_cls.primary_palette = "BlueGray"
+        self.theme_cls.primary_hue = "500" 
+        self.title="MOLI-NAV"
+
+        
+        return MyLayout()
+
+    def on_start(self):
+
+        self.root.ids.screen_manager.switch_to(self.root.ids.splashScreen)
+        
+        # self.root.ids.progress.value = 100;
+        speed = 47
+        self.root.ids.speed_bar.value = speed
+        speeds = str(speed)
+        self.root.ids.speed_bar_value.text = speeds
+        speed_value = "%s km/h" %(str(speed))
+        self.root.ids.speed_value.text = speed_value
+        print(speed_value)
+        #baca tegangan
+        # with open('file.txt')
+
+        SOC = 2
+        self.SOC = SOC
+        self.root.ids.SOC_bar.value = SOC
+        SOC_text = "TEGANGAN : "+str(SOC)+" V"
+        self.root.ids.tegangan_value_text.text = SOC_text
+        SOC_value = round((SOC/3)*100, 1)
+        SOC_value = str(SOC_value)+"%"
+        self.root.ids.SOC_value.text = SOC_value
+        self.root.ids.SOC_bar_value.text = SOC_value
+        print(SOC_value)
+        print(Clock.max_iteration)
+        self.sub1 = Clock.schedule_interval(self.update_time, 5)
+        self.sub2 = Clock.schedule_interval(self.update_data, 1)
+        self.subScreen = Clock.schedule_once(self.changeScreen,5)
+
+    def changeScreen(self,dt):
+        self.root.ids.screen_manager.transition = RiseInTransition()
+        self.root.ids.screen_manager.switch_to(self.root.ids.mainScreen)
 
     #update data, untuk sekarang hanya SOC
     def update_data(self,nap):
@@ -90,8 +138,8 @@ class Gesits(MDApp):
             rt = open('datastore.json')
             rtfile = json.load(rt)
             tegangan = rtfile['tegangan']
-        except Exception as e:
-            print('datavalue error :',str(e) )
+        except:
+            pass
         if tegangan== 0.00:
             pass
         else:
@@ -176,40 +224,6 @@ class Gesits(MDApp):
                     #    print ("koneksi sukses")
     
 
-    def build(self):
-        #self.theme_cls.accent_color = "Green"
-        self.theme_cls.theme_style = "Dark"
-        #self.theme_cls.primary_palette = "BlueGray"
-        #self.theme_cls.primary_hue = "800" 
-        self.theme_cls.primary_palette = "Red"
-        self.theme_cls.primary_hue = "500" 
-        return MyLayout()
-
-    def on_start(self):
-        
-        speed = 47
-        self.root.ids.speed_bar.value = speed
-        speeds = str(speed)
-        self.root.ids.speed_bar_value.text = speeds
-        speed_value = "%s km/h" %(str(speed))
-        self.root.ids.speed_value.text = speed_value
-        print(speed_value)
-        #baca tegangan
-        # with open('file.txt')
-
-        SOC = 2
-        self.SOC = SOC
-        self.root.ids.SOC_bar.value = SOC
-        SOC_text = "TEGANGAN : "+str(SOC)+" V"
-        self.root.ids.tegangan_value_text.text = SOC_text
-        SOC_value = round((SOC/3)*100, 1)
-        SOC_value = str(SOC_value)+"%"
-        self.root.ids.SOC_value.text = SOC_value
-        self.root.ids.SOC_bar_value.text = SOC_value
-        print(SOC_value)
-        print(Clock.max_iteration)
-        self.sub1 = Clock.schedule_interval(self.update_time, 5)
-        self.sub2 = Clock.schedule_interval(self.update_data, 1)
 
 class MyLayout(Screen):
 
@@ -426,7 +440,7 @@ class MyLayout(Screen):
 
         try:
             self.popup = MDDialog(title='Tersambung',
-                        radius=[7, 7, 20, 7],
+                        radius=[7, 7, 7, 7],
                         md_bg_color=(244/255,67/255,54/255,1),
                         size_hint=(None, None), size=(400, 400))
             self.popup.open()
