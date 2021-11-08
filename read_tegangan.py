@@ -4,7 +4,10 @@ import serial
 # import time
 import json
 
-ser = serial.Serial('/dev/ttyUSB0',9600, timeout = 5)
+try:
+    ser = serial.Serial('/dev/ttyUSB0',9600, timeout = 5)
+except:
+    ser = serial.Serial('/dev/ttyUSB1',9600, timeout = 5)
 
 
 # val1 = ""
