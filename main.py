@@ -662,7 +662,7 @@ lay = MyLayout()
 back1 = Popen("python read_tegangan.py", shell=True);
 blu = Popen("python rfcomm_server.py", shell=True);
 Gesits().run()
-os.system("killall python")
+os.system("sudo killall python")
 os.system("exit")
 
 ##ifi = Popen("python3 testing.py", shell=True);

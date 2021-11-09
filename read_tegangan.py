@@ -5,8 +5,10 @@ import serial
 import json
 
 try:
+    os.system("sudo chmod 777 /dev/ttyUSB0")
     ser = serial.Serial('/dev/ttyUSB0',9600, timeout = 5)
 except:
+    os.system("sudo chmod 777 /dev/ttyUSB1")
     ser = serial.Serial('/dev/ttyUSB1',9600, timeout = 5)
 
 
@@ -25,8 +27,8 @@ while True:
             # json_data = "tegangan: "+str(fldata)
             # data = json.loads(data)
         try:
-            tegangan=data['tegangan']
-            kecepatan=data['rps']
+            tegangan=data['t']
+            kecepatan=data['r']
         except:
             tegangan="0.00"
             kecepatan="0.00"
