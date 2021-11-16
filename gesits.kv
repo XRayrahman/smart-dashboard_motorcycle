@@ -81,46 +81,46 @@
 
 <MyLayout>
     #screendget_mini:
-    ScreenManager:
-        id:screen_manager
-        Screen:
-            id:splashScreen
-            name:"splashScreen"
-            # on_enter: self.ids.progress.start()
-            BoxLayout:
-                orientation:'vertical'
-                size:root.height,root.width
+    # ScreenManager:
+    #     id:screen_manager
+    #     Screen:
+    #         id:splashScreen
+    #         name:"splashScreen"
+    #         # on_enter: self.ids.progress.start()
+    #         BoxLayout:
+    #             orientation:'vertical'
+    #             size:root.height,root.width
 
-                canvas:
-                    Rectangle:
-                        # source: 'bg.png'
-                        size: self.height, self.width
+    #             canvas:
+    #                 Rectangle:
+    #                     # source: 'bg.png'
+    #                     size: self.height, self.width
 
                 
-                MDBoxLayout:
-                    md_bg_color: 23/255,28/255,35/255,1
-                    pos_hint: {"center_x": 0.5,"center_y": 0.5}
-                    padding:"15dp"
-                    orientation: 'vertical'
-                    # Label_roboto:
-                    #     # id: label_bottom_ori
-                    #     text:"Install aplikasi\nuntuk estimasi"
-                    #     size_hint:1,1
-                    #     font_size:"12sp"
-                    #     halign:"center"
-                    #     color:(23/255,28/255,35/255,1)
-                    Image:
-                        source: 'mobile-app.png'
-                        size: self.texture_size
-                    BoxLayout:
-                        pos_hint: {"center_x": 0.5,"center_y": 1}
-                        padding:"10dp"
-                        size_hint: 0.3,0.1
+    #             MDBoxLayout:
+    #                 md_bg_color: 23/255,28/255,35/255,1
+    #                 pos_hint: {"center_x": 0.5,"center_y": 0.5}
+    #                 padding:"15dp"
+    #                 orientation: 'vertical'
+    #                 # Label_roboto:
+    #                 #     # id: label_bottom_ori
+    #                 #     text:"Install aplikasi\nuntuk estimasi"
+    #                 #     size_hint:1,1
+    #                 #     font_size:"12sp"
+    #                 #     halign:"center"
+    #                 #     color:(23/255,28/255,35/255,1)
+    #                 Image:
+    #                     source: 'mobile-app.png'
+    #                     size: self.texture_size
+    #                 BoxLayout:
+    #                     pos_hint: {"center_x": 0.5,"center_y": 1}
+    #                     padding:"10dp"
+    #                     size_hint: 0.3,0.1
 
-                        MDProgressBar:
-                            id: progress
-                            orientation:"horizontal"
-                            value:30
+    #                     MDProgressBar:
+    #                         id: progress
+    #                         orientation:"horizontal"
+    #                         value:30
                             # type:"indeterminate"
                             # running_duration:5
                             # catching_duration:1
@@ -128,696 +128,696 @@
 
 
 
-        Screen:
-            id:mainScreen
-            name:"mainScreen"
-            BoxLayout:
-                orientation:'vertical'
-                size:root.height,root.width
+        # Screen:
+        #     id:mainScreen
+        #     name:"mainScreen"
+    BoxLayout:
+        orientation:'vertical'
+        size:root.height,root.width
 
-                canvas:
+        canvas:
+            Rectangle:
+                source: 'bg.png'
+                size: self.height, self.width
+
+        
+        MDBoxLayout:
+            md_bg_color: 15/255,18/255,23/255,1
+            GridLayout:
+                cols:2
+                size_hint: 1, 1
+                spacing:"15dp"
+                padding:"15dp"
+                canvas.before:
                     Rectangle:
-                        source: 'bg.png'
-                        size: self.height, self.width
-
-                
-                MDBoxLayout:
-                    md_bg_color: 15/255,18/255,23/255,1
-                    GridLayout:
-                        cols:2
-                        size_hint: 1, 1
-                        spacing:"15dp"
-                        padding:"15dp"
-                        canvas.before:
-                            Rectangle:
-                                # source:"../GESITS-DASHBOARD/bg.png"
-                                size: self.size
-                                pos: self.pos
-                        GridLayout:
-                            rows:3
-                            size_hint:0.27,1
-                            spacing:"15dp"
+                        # source:"../GESITS-DASHBOARD/bg.png"
+                        size: self.size
+                        pos: self.pos
+                GridLayout:
+                    rows:3
+                    size_hint:0.27,1
+                    spacing:"15dp"
 
 
-                            ScreenManager:
-                                id:menubar_left
-                                size_hint_y:1
-                                Screen:
-                                    id: menubar_leftTop1
-                                    name:'menubar_leftTop1'
-                                    BoxLayout:
-                                        orientation: "vertical"
-                                        spacing:'15dp'
-                                        CardLayout:
-                                            orientation: "horizontal"
-                                            size_hint_y: 0.4
-                                            # MDIconButton:
-                                            #     icon: "motorbike"
-                                            #     user_font_size: "50sp"
-                                            #     theme_text_color: "Custom"
-                                            #     text_color: app.theme_cls.primary_color
-                                            #     pos_hint:{"center_x": .1, "center_y": .5}
-                                            Label_roboto:
-                                                id: mode_speed
-                                                text: "NORMAL"
-                                                font_size: "24sp"
-                                                pos_hint: {"center_x": .5, "center_y": .5}
-
-                                        CardLayout:
-                                            orientation: "horizontal"
-                                            size_hint_y: 0.4
-
-                                            spacing:5
-                                            # MDIconButton:
-                                            #     icon: "thermometer-lines"
-                                            #     user_font_size: "50sp"
-                                            #     theme_text_color: "Custom"
-                                            #     text_color: app.theme_cls.primary_color
-                                            #     pos_hint:{"left": .1, "center_y": .5}
-                                            # Label_roboto:
-                                            #     id: suhu
-                                            #     text: "37 °C"
-                                            #     font_size: "32sp"
-                                            #     pos_hint: {"center_x": .5, "center_y": .5}
-
-                                            BoxLayout:  
-                                                Switch:
-                                                    id: switch
-                                                    bg_color: rgba(57/255,255/255,20/255,1)
-                                                # Label:
-                                                #     text: 'ON' if switch.active else 'OFF'
-
-                                Screen:
-                                    id: menubar_leftTop2
-                                    name: "menubar_leftTop2"
-                                    BoxLayout:
-                                        orientation: "vertical"
-                                        spacing:'15dp'
-                                        CardLayout:
-                                            orientation: "horizontal"
-                                            size_hint_y: 0.4
-                                            # MDIconButton:
-                                            #     icon: "road-variant"
-                                            #     user_font_size: "35sp"
-                                            #     theme_text_color: "Custom"
-                                            #     text_color: app.theme_cls.primary_color
-                                            #     pos_hint:{"center_x": .1, "center_y": .5}
-                                            Label_roboto:
-                                                id: DummyDistance
-                                                text: ""
-                                                font_size: "32sp"
-                                                pos_hint: {"center_x": .5, "center_y": .5}
-
-                                        CardLayout:
-                                            orientation: "horizontal"
-                                            size_hint_y: 0.4
-                                            Label_roboto:
-                                                id: DummyTimeEst
-                                                text: ""
-                                                font_size: "32sp"
-                                                pos_hint: {"center_x": .5, "center_y": .5}
-
-                            ScreenManager:
-                                id:screendget_mini
-                                size_hint_y: 1
-                                Screen:
-                                    id:s_mini1
-                                    name:'s_mini1'
-                                    CardLayout:
-                                        size_hint:1,1
-                                        padding:"15dp"
-                                        orientation:"vertical"
-                                        Label_roboto:
-                                            # id: label_bottom_ori
-                                            text:"Install aplikasi\nuntuk estimasi"
-                                            size_hint:1,1
-                                            font_size:"12sp"
-                                            halign:"center"
-                                            color:(1,1,1,1)
-                                        Image:
-                                            source: 'mobile-app.png'
-                                            size: self.texture_size
-                                Screen:
-                                    id:s_mini2
-                                    CardLayout:
-                                        orientation: 'vertical'
-                                        size_hint_y: 1
-                                        spacing:"10dp"
-
-                                        Label_roboto:
-                                            # id: label_bottom_ori
-                                            text:"Dengan estimasi\nkecepatan 50 km/h :"
-                                            size_hint:1,0.4
-                                            font_size:"12sp"
-                                            halign:"left"
-                                            color:(1,1,1,1)
-                                        Label_roboto:
-                                            id: recommendation
-                                            text:""
-                                            halign: "center"
-                                            valign: "center"
-                                            text_size: self.size
-                                            size_hint:1,.9
-                                            # font_size: "12sp"
-                                            font_size: "28sp"
-                                            bold: True
-                                            color: 146/255,218/255,241/255,1
-
+                    ScreenManager:
+                        id:menubar_left
+                        size_hint_y:1
+                        Screen:
+                            id: menubar_leftTop1
+                            name:'menubar_leftTop1'
                             BoxLayout:
-                                orientation: "horizontal"
-                                size_hint_y:0.5
-
-
-                                    #Button:
-                                    #    size_hint:.3,.5
-                                    #    text: 'test'
-                                    #    on_release: qr.data = "Kivy Rocks!"
-                                QRCodeWidget:
-                                    id: qr
-                                    data: 'Hello World'
-                                    size_hint:0.8,0.8
-
-                                Label_roboto:
-                                    text: 'Motor ID: \nJ1234DS'
-                                    font_size:'12sp'
-                                    valign:'center'
-
-
-
-                        GridLayout:
-                            rows: 2
-                            size_hint: 1, 1
-                            spacing:"15dp"
-                            #canvas:
-                            #    Color:
-                            #        rgba: (5/255,2/255,21/255,1)
-                            #    Rectangle:
-        #
-                            #        size: self.size
-                            #        pos: self.pos
-                            BoxLayout:
-                                size_hint: 1, 1
-                                #padding:"15dp"
-                                spacing:"15dp"
                                 orientation: "vertical"
-                                ScreenManager:
-                                    id:screendget
-                                    Screen:
-                                        id:test1
-                                        name: "screen1"
-                                        BoxLayout:
-                                            size_hint:1,1
-                                            orientation: "horizontal"
-                                            canvas:
-                                                Color:
-                                                    rgba:(23/255,28/255,35/255,1  )
-                                                RoundedRectangle:
-                                                    size: self.size
-                                                    pos: self.pos
-
-                                            # BoxLayout:
-                                            #     size_hint: 0.2, 1
-                                            #     orientation: "vertical"
-                                            #     spacing:"15dp"
-                                            #     padding:"25dp"
-                                            #     MDIconButton:
-                                            #         icon: "bluetooth"
-                                            #         user_font_size: "50sp"
-                                            #         theme_text_color: "Custom"
-                                            #         text_color: app.theme_cls.primary_color
-                                            #         pos_hint:{"left": .5, "center_y": .5}
-                                            #     MDIconButton:
-                                            #         icon: "cast-connected"
-                                            #         user_font_size: "50sp"
-                                            #         theme_text_color: "Custom"
-                                            #         text_color: app.theme_cls.primary_color
-                                            #         pos_hint:{"left": .5, "center_y": .5}
-
-                                            BoxLayout:
-                                                size_hint: 0.7, 1
-                                                padding: "25dp"
-                                                orientation: 'vertical'
-                                                BoxLayout:
-                                                    size_hint: 1, 0.4
-                                                SpeedMeter:
-                                                    size_hint:1,1
-                                                    id: SOC_bar
-                                                    max: 100
-                                                    tick: 300
-                                                    start_angle: -180
-                                                    end_angle: 90
-                                                    subtick: 3
-                                                    # label: 'km/h'
-                                                    value:
-                                                    cadran_color: '#171C23'
-                                                    shadow_color: '#92DAF1'
-                                                    shadow_width: 20
-                                                    #needle_color: '#ff0000'
-                                                    sectors: [0, '#0B0E0D']
-                                                    sector_width: 18
-                                            BoxLayout:
-                                                size: 0.5,1
-                                                padding: "25dp"
-                                                SpeedMeter:
-                                                    size_hint:1,1
-                                                    id: speed_bar
-                                                    max: 105
-                                                    tick: 10
-                                                    start_angle: -90
-                                                    end_angle: 180
-                                                    subtick: 5
-                                                    # label: 'km/h'
-                                                    value:
-                                                    cadran_color: '#171C23'
-                                                    shadow_color: '#92DAF1'
-                                                    shadow_width: 50
-                                                    #needle_color: '#ff0000'
-                                                    sectors: [0, '#0B0E0D']
-                                                    sector_width: 22
-                                                # #spacing:"25dp"
-                                                # orientation: "vertical"
-                                                # spacing:"15dp"
-                                                # padding:"25dp"
-                                                # MDIconButton:
-                                                #     icon: "arrow-left-bold"
-                                                #     user_font_size: "50sp"
-                                                #     theme_text_color: "Custom"
-                                                #     text_color: app.theme_cls.primary_color
-                                                #     pos_hint:{"left": .5, "center_y": .5}
-                                                # MDIconButton:
-                                                #     icon: "arrow-right-bold"
-                                                #     user_font_size: "50sp"
-                                                #     theme_text_color: "Custom"
-                                                #     text_color: app.theme_cls.primary_color
-                                                #     pos_hint:{"left": .5, "center_y": .5}
-                                                # MDIconButton:
-                                                #     icon: "account-circle"
-                                                #     user_font_size: "50sp"
-                                                #     theme_text_color: "Custom"
-                                                #     text_color: app.theme_cls.primary_color
-                                                #     pos_hint:{"left": .5, "center_y": .5}
-                                        
-                                        FloatLayout:
-                                            size_hint:1,1
-                                            BoxLayout:
-                                                orientation: "vertical"
-                                                # pos_hint:{"top":1,"x":.83}
-                                                pos_hint: {"top": .93,"x": 0.001}
-                                                size_hint: .2, .2
-                                                padding:"7dp"                            
-                                                Label_roboto:
-                                                    id: time
-                                                    font_size:20
-                                                    text: '[b]00[/b]:00'
-                                        FloatLayout:
-                                            size_hint:1,1
-                                            BoxLayout:
-                                                orientation: "vertical"
-                                                pos_hint:{"top":.9,"x":.17}
-                                                size_hint: .18, .12
-                                                bg_color:
-                                                padding:"7dp"
-                                                canvas:
-                                                    Color:
-                                                        rgba:(15/255,18/255,23/255,1)
-                                                    RoundedRectangle:
-                                                        size: self.size
-                                                        pos: self.pos
-                                                Label:
-                                                    id:odometer
-                                                    bold: True
-                                                    text:"000147"
-                                                    font_name:"Roboto"
-                                                    font_size:"24sp"
-                                                    halign:"center"
-                                                    color: 146/255,218/255,241/255,1
-                                        FloatLayout:
-                                            size_hint:1,1
-                                            BoxLayout:
-                                                orientation: "vertical"
-                                                pos_hint:{"top":.43,"x":.45}
-                                                size_hint: .25, .25
-                                                padding:"7dp"
-                                                Label:
-                                                    id:speed_bar_value
-                                                    bold: True
-                                                    text:"47"
-                                                    font_name:"Roboto"
-                                                    font_size:"68sp"
-                                                    halign:"center"
-                                                    color: 146/255,218/255,241/255,1
-                                        FloatLayout:
-                                            size_hint:1,1
-                                            BoxLayout:
-                                                orientation: "vertical"
-                                                pos_hint:{"top":.4,"x":.17}
-                                                size_hint: .25, .25
-                                                padding:"7dp"
-                                                Label:
-                                                    id:SOC_bar_value
-                                                    bold: True
-                                                    text:"47%"
-                                                    font_name:"Roboto"
-                                                    font_size:"28sp"
-                                                    halign:"center"
-                                                    color: 146/255,218/255,241/255,1
-                                                
-
-
-                                    Screen:
-                                        id:test2
-                                        name: "screen2"
-
-                                        BoxLayout:
-
-                                            MapView:
-                                                id:mapview
-                                                zoom:12
-                                                lat:-7.2575
-                                                lon:112.7521
-                                                # center_on:(lat,lon)
-                                                
-                                                #map_source: 'osm-hot'
-                                                #map_source: MapSource.MapSource(url='https://tile.thunderforest.com/mobile-atlas/{z}/{x}/{y}.png?apikey=f872d70d2fa74f1c96049845e81a8a99', attribution='')
-                                                map_source: MapSource.MapSource(cache_key='cartodb-darkmatter', url='https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png?apikey=f872d70d2fa74f1c96049845e81a8a99', attribution="@OpenStreet Map - DarkMatter")
-                                                #https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png
-                                                #cache_key='cartodb-darkmatter'
-                                                marker:
-                                                # BoxLayout:
-                                                #     orientation:"vertical"
-                                                #     BoxLayout:
-                                                #         orientation: "horizontal"
-                                                #         padding:"15dp"
-                                                #         MDIconButton:
-                                                #             icon: "arrow-left-bold"
-                                                #             user_font_size: "50sp"
-                                                #             theme_text_color: "Custom"
-                                                #             text_color: app.theme_cls.primary_color
-                                                #             pos_hint:{"left": .5, "center_y": .5}
-
-                                                #         MDIconButton:
-                                                #             icon: "arrow-right-bold"
-                                                #             user_font_size: "50sp"
-                                                #             theme_text_color: "Custom"
-                                                #             text_color: app.theme_cls.primary_color
-                                                #             pos_hint:{"left": .5, "center_y": .5}
-
-                                                #     GridLayout:
-                                                #         cols:1
-
-                                                #     GridLayout:
-                                                #         cols:1
-
-                                                #     GridLayout:
-                                                #         cols:1
-
-                                        FloatLayout:
-                                            size_hint:1,1
-                                            BoxLayout:
-                                                orientation: "vertical"
-                                                pos_hint:{"top":.28,"right":.971}
-                                                size_hint_y:.2
-                                                size_hint_x:.55
-                                                # size: lokasi_label.size
-                                                padding:"7dp"
-                                                canvas:
-                                                    Color:
-                                                        rgba:(146/255,218/255,241/255,1)
-                                                    RoundedRectangle:
-                                                        size: self.size 
-                                                        pos: self.pos
-                                                BoxLayout:
-                                                    orientation:"vertical"
-                                                    Label_roboto:
-                                                        id: lokasi_label
-                                                        text:"SAMBUNGKAN INTERNET"
-                                                        # size_hint:.5,1
-                                                        size:self.size
-                                                        font_size:"15sp"
-                                                        halign:"left"
-                                                        # pos_hint: {"center_x":0.27}
-
-                                                    # Label_roboto:
-                                                    #     text:"--------------------------"
-                                                    #     size_hint:1,1
-                                                    #     font_size:"15sp"
-                                                    #     halign:"left"
-
-                                                    # BoxLayout:
-                                                    #     orientation: 'horizontal'
-                                                        # MDIconButton:
-                                                        #     id: right_icon
-                                                        #     icon: "arrow-right"
-                                                        #     font_size: "5sp"
-                                                        #     pos_hint:{"left": .5, "center_y": .5}
-
-                                                    # Label_roboto:
-                                                    #     id: label_bottom_dest
-                                                    #     text:"ERROR, SAMBUNGKAN INTERNET"
-                                                    #     size_hint:1,1
-                                                    #     font_size:"15sp"
-                                                    #     halign:"left"
-                                            ##pos_hint: {"x": .1, "top": .1}
-
-                                    # Screen:
-                                    #     id:test3
-                                    #     name: "screen3"
-                                    #     BoxLayout:
-                                    #         size_hint:1,1
-                                    #         orientation: "horizontal"
-                                    #         canvas:
-                                    #             Color:
-                                    #                 rgba:(23/255,28/255,35/255,1  )
-                                    #             RoundedRectangle:
-                                    #                 size: self.size
-                                    #                 pos: self.pos
-                                    #         ScrollView:
-                                    #             MDList:
-                                    #                 id: container
-                                    #                 theme_text_color: 'Custom'
-                                    #                 text_color: 1,1,1,1
-                                                    #BaseListItem:
-                                                    #    theme_text_color: 'Primary'
-
-                                        #MDTextField:
-                                        #    id: tujuan
-                                    #    hint_text: "input alamat"
-                                    #    mode: "rectangle"
-                                    #    pos_hint: {"left":1}
-                                    #    size_hint: .4,1
-                                    #    multiline: False
-                                    #    write_tab: False
-                                    #MDFillRoundFlatButton:
-                                    #    id: button_estimasi
-                                    #    pos_hint: {"center_x": .5, "center_y": .5}
-                                    #    text: "estimasi"
-                                    #    #color: 1,1,1,1
-                                    #    size_hint:0.2,0.7
-                                        #on_press: root.estimasi()
-                                        #on_release: root.move_maps()
-                                        #on_release: root.center_maps()
-                                        #on_release: root.move_s_mini2()
-                                        #on_release: root.move_menubar_left2()
-                                        #on_release:root.estimasi()
-                                        #icon_right:xxxxxxxxxxxxx "card-search-outline"
-                                    #normal_color: app.theme_cls.accent_color
-
-        #
-                            BoxLayout:
-                                size_hint: 1, 0.25
-                                # padding:"25dp"
-                                spacing: 15
-                                orientation:"horizontal"
-
-                                BoxLayout:
-                                    size_hint: 0.4, 1
-                                    padding:'25sp'
-                                    canvas:
-                                        Color:
-                                            rgba:(23/255,28/255,35/255,1  )
-                                        RoundedRectangle:
-                                            size: self.size
-                                            pos: self.pos
-                                    # padding:"25dp"
-                                    # spacing: 10
-                                #     MDIconButton:
-                                #         icon: "battery-medium"
-                                #         user_font_size: "50sp"
-                                # #Rotate:
-                                # #    angle: 45
-                                # #    origin: self.center
-
-                                #         theme_text_color: "Custom"
-                                #         text_color: app.theme_cls.primary_color
-                                #         pos_hint:{"left": .5, "center_y": .5}
-
-                                    BoxLayout:
-                                        size_hint: 1,1
-                                        orientation:"horizontal"
-                                        spacing:5
-                                        Label:
-                                            text:"SOC :"
-                                            # font_style: "Head1"
-                                            font_name:"Roboto"
-                                            font_size:"20sp"
-                                            halign:"left"
-                                            size_hint:0.3,1
-
-                                        Label:
-                                            id: SOC_value
-                                            size_hint:0.7,1
-                                            text:""
-                                            #font_style: "Body2"
-                                            font_name:"Roboto"
-                                            font_size:"32sp"
-                                            halign:"right"
-
-                                # BoxLayout:
-                                #     size_hint: .1,1
-                                BoxLayout:
-                                    size_hint: 0.45, 1
-                                    padding:'25sp'
-                                    canvas:
-                                        Color:
-                                            rgba:(23/255,28/255,35/255,1  )
-                                        RoundedRectangle:
-                                            size: self.size
-                                            pos: self.pos
-                                    # spacing:10
-                                    # padding:"25dp"
+                                spacing:'15dp'
+                                CardLayout:
+                                    orientation: "horizontal"
+                                    size_hint_y: 0.4
                                     # MDIconButton:
-                                    #     icon: "speedometer"
+                                    #     icon: "motorbike"
                                     #     user_font_size: "50sp"
                                     #     theme_text_color: "Custom"
                                     #     text_color: app.theme_cls.primary_color
-                                    #     pos_hint:{"left": .5, "center_y": .5}
+                                    #     pos_hint:{"center_x": .1, "center_y": .5}
+                                    Label_roboto:
+                                        id: mode_speed
+                                        text: "NORMAL"
+                                        font_size: "24sp"
+                                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                                CardLayout:
+                                    orientation: "horizontal"
+                                    size_hint_y: 0.4
+
+                                    spacing:5
+                                    # MDIconButton:
+                                    #     icon: "thermometer-lines"
+                                    #     user_font_size: "50sp"
+                                    #     theme_text_color: "Custom"
+                                    #     text_color: app.theme_cls.primary_color
+                                    #     pos_hint:{"left": .1, "center_y": .5}
+                                    # Label_roboto:
+                                    #     id: suhu
+                                    #     text: "37 °C"
+                                    #     font_size: "32sp"
+                                    #     pos_hint: {"center_x": .5, "center_y": .5}
+
+                                    BoxLayout:  
+                                        Switch:
+                                            id: switch
+                                            bg_color: rgba(57/255,255/255,20/255,1)
+                                        # Label:
+                                        #     text: 'ON' if switch.active else 'OFF'
+
+                        Screen:
+                            id: menubar_leftTop2
+                            name: "menubar_leftTop2"
+                            BoxLayout:
+                                orientation: "vertical"
+                                spacing:'15dp'
+                                CardLayout:
+                                    orientation: "horizontal"
+                                    size_hint_y: 0.4
+                                    # MDIconButton:
+                                    #     icon: "road-variant"
+                                    #     user_font_size: "35sp"
+                                    #     theme_text_color: "Custom"
+                                    #     text_color: app.theme_cls.primary_color
+                                    #     pos_hint:{"center_x": .1, "center_y": .5}
+                                    Label_roboto:
+                                        id: DummyDistance
+                                        text: ""
+                                        font_size: "32sp"
+                                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                                CardLayout:
+                                    orientation: "horizontal"
+                                    size_hint_y: 0.4
+                                    Label_roboto:
+                                        id: DummyTimeEst
+                                        text: ""
+                                        font_size: "32sp"
+                                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                    ScreenManager:
+                        id:screendget_mini
+                        size_hint_y: 1
+                        Screen:
+                            id:s_mini1
+                            name:'s_mini1'
+                            CardLayout:
+                                size_hint:1,1
+                                padding:"15dp"
+                                orientation:"vertical"
+                                Label_roboto:
+                                    # id: label_bottom_ori
+                                    text:"Install aplikasi\nuntuk estimasi"
+                                    size_hint:1,1
+                                    font_size:"12sp"
+                                    halign:"center"
+                                    color:(1,1,1,1)
+                                Image:
+                                    source: 'mobile-app.png'
+                                    size: self.texture_size
+                        Screen:
+                            id:s_mini2
+                            CardLayout:
+                                orientation: 'vertical'
+                                size_hint_y: 1
+                                spacing:"10dp"
+
+                                Label_roboto:
+                                    # id: label_bottom_ori
+                                    text:"Dengan estimasi\nkecepatan 50 km/h :"
+                                    size_hint:1,0.4
+                                    font_size:"12sp"
+                                    halign:"left"
+                                    color:(1,1,1,1)
+                                Label_roboto:
+                                    id: recommendation
+                                    text:""
+                                    halign: "center"
+                                    valign: "center"
+                                    text_size: self.size
+                                    size_hint:1,.9
+                                    # font_size: "12sp"
+                                    font_size: "28sp"
+                                    bold: True
+                                    color: 146/255,218/255,241/255,1
+
+                    BoxLayout:
+                        orientation: "horizontal"
+                        size_hint_y:0.5
+
+
+                            #Button:
+                            #    size_hint:.3,.5
+                            #    text: 'test'
+                            #    on_release: qr.data = "Kivy Rocks!"
+                        QRCodeWidget:
+                            id: qr
+                            data: 'Hello World'
+                            size_hint:0.8,0.8
+
+                        Label_roboto:
+                            text: 'Motor ID: \nJ1234DS'
+                            font_size:'12sp'
+                            valign:'center'
+
+
+
+                GridLayout:
+                    rows: 2
+                    size_hint: 1, 1
+                    spacing:"15dp"
+                    #canvas:
+                    #    Color:
+                    #        rgba: (5/255,2/255,21/255,1)
+                    #    Rectangle:
+#
+                    #        size: self.size
+                    #        pos: self.pos
+                    BoxLayout:
+                        size_hint: 1, 1
+                        #padding:"15dp"
+                        spacing:"15dp"
+                        orientation: "vertical"
+                        ScreenManager:
+                            id:screendget
+                            Screen:
+                                id:test1
+                                name: "screen1"
+                                BoxLayout:
+                                    size_hint:1,1
+                                    orientation: "horizontal"
+                                    canvas:
+                                        Color:
+                                            rgba:(23/255,28/255,35/255,1  )
+                                        RoundedRectangle:
+                                            size: self.size
+                                            pos: self.pos
+
+                                    # BoxLayout:
+                                    #     size_hint: 0.2, 1
+                                    #     orientation: "vertical"
+                                    #     spacing:"15dp"
+                                    #     padding:"25dp"
+                                    #     MDIconButton:
+                                    #         icon: "bluetooth"
+                                    #         user_font_size: "50sp"
+                                    #         theme_text_color: "Custom"
+                                    #         text_color: app.theme_cls.primary_color
+                                    #         pos_hint:{"left": .5, "center_y": .5}
+                                    #     MDIconButton:
+                                    #         icon: "cast-connected"
+                                    #         user_font_size: "50sp"
+                                    #         theme_text_color: "Custom"
+                                    #         text_color: app.theme_cls.primary_color
+                                    #         pos_hint:{"left": .5, "center_y": .5}
 
                                     BoxLayout:
-                                        size_hint: 1,1
-                                        orientation:"horizontal"
-                                        spacing:5
-                                        #Label:
-                                        #    text:"Speed :"
-                                        #    font_style: "Body2"
-                                        #    font_name:"Roboto"
-
+                                        size_hint: 0.7, 1
+                                        padding: "25dp"
+                                        orientation: 'vertical'
+                                        BoxLayout:
+                                            size_hint: 1, 0.4
+                                        SpeedMeter:
+                                            size_hint:1,1
+                                            id: SOC_bar
+                                            max: 100
+                                            tick: 300
+                                            start_angle: -180
+                                            end_angle: 90
+                                            subtick: 3
+                                            # label: 'km/h'
+                                            value:
+                                            cadran_color: '#171C23'
+                                            shadow_color: '#92DAF1'
+                                            shadow_width: 20
+                                            #needle_color: '#ff0000'
+                                            sectors: [0, '#0B0E0D']
+                                            sector_width: 18
+                                    BoxLayout:
+                                        size: 0.5,1
+                                        padding: "25dp"
+                                        SpeedMeter:
+                                            size_hint:1,1
+                                            id: speed_bar
+                                            max: 105
+                                            tick: 10
+                                            start_angle: -90
+                                            end_angle: 180
+                                            subtick: 5
+                                            # label: 'km/h'
+                                            value:
+                                            cadran_color: '#171C23'
+                                            shadow_color: '#92DAF1'
+                                            shadow_width: 50
+                                            #needle_color: '#ff0000'
+                                            sectors: [0, '#0B0E0D']
+                                            sector_width: 22
+                                        # #spacing:"25dp"
+                                        # orientation: "vertical"
+                                        # spacing:"15dp"
+                                        # padding:"25dp"
+                                        # MDIconButton:
+                                        #     icon: "arrow-left-bold"
+                                        #     user_font_size: "50sp"
+                                        #     theme_text_color: "Custom"
+                                        #     text_color: app.theme_cls.primary_color
+                                        #     pos_hint:{"left": .5, "center_y": .5}
+                                        # MDIconButton:
+                                        #     icon: "arrow-right-bold"
+                                        #     user_font_size: "50sp"
+                                        #     theme_text_color: "Custom"
+                                        #     text_color: app.theme_cls.primary_color
+                                        #     pos_hint:{"left": .5, "center_y": .5}
+                                        # MDIconButton:
+                                        #     icon: "account-circle"
+                                        #     user_font_size: "50sp"
+                                        #     theme_text_color: "Custom"
+                                        #     text_color: app.theme_cls.primary_color
+                                        #     pos_hint:{"left": .5, "center_y": .5}
+                                
+                                FloatLayout:
+                                    size_hint:1,1
+                                    BoxLayout:
+                                        orientation: "vertical"
+                                        # pos_hint:{"top":1,"x":.83}
+                                        pos_hint: {"top": .93,"x": 0.001}
+                                        size_hint: .2, .2
+                                        padding:"7dp"                            
+                                        Label_roboto:
+                                            id: time
+                                            font_size:20
+                                            text: '[b]00[/b]:00'
+                                FloatLayout:
+                                    size_hint:1,1
+                                    BoxLayout:
+                                        orientation: "vertical"
+                                        pos_hint:{"top":.9,"x":.17}
+                                        size_hint: .18, .12
+                                        bg_color:
+                                        padding:"7dp"
+                                        canvas:
+                                            Color:
+                                                rgba:(15/255,18/255,23/255,1)
+                                            RoundedRectangle:
+                                                size: self.size
+                                                pos: self.pos
                                         Label:
-                                            text:"SPEED :"
-                                            # font_style: "Head1"
+                                            id:odometer
+                                            bold: True
+                                            text:"000147"
                                             font_name:"Roboto"
-                                            font_size:"20sp"
-                                            halign:"left"
-                                            size_hint:0.3,1
-
+                                            font_size:"24sp"
+                                            halign:"center"
+                                            color: 146/255,218/255,241/255,1
+                                FloatLayout:
+                                    size_hint:1,1
+                                    BoxLayout:
+                                        orientation: "vertical"
+                                        pos_hint:{"top":.43,"x":.45}
+                                        size_hint: .25, .25
+                                        padding:"7dp"
                                         Label:
-                                            id:speed_value
-                                            size_hint:0.7,1
-                                            text:""
+                                            id:speed_bar_value
+                                            bold: True
+                                            text:"47"
                                             font_name:"Roboto"
-                                            font_size:"32sp"
-                                            halign:"right"
-            FloatLayout:
-                size_hint:1,1
-                PilLayout:
-                    orientation: "horizontal"
-                    pos_hint:{"top":.835,"x":.07}
-                    Label_roboto:
-                        id: mode_label
-                        
-                        text:"MODE"
-                        size_hint:1,1
-                        font_size:"12sp"
-                        pos_hint: {"center_x":0.27}
-                        color:(0,0,0,1)
-
-            FloatLayout:
-                size_hint:1,1
-                PilLayout:
-                    orientation: "horizontal"
-                    pos_hint:{"top":.645,"x":.07}
-                    Label_roboto:
-                        id: suhu_label
-                        text:"POWER"
-                        size_hint:1,1
-                        font_size:"12sp"
-                        pos_hint: {"center_x":0.27}
-                        color:(0,0,0,1)
-                        
-            FloatLayout:
-                size_hint:1,1
-                PilLayout:
-                    orientation: "horizontal"
-                    pos_hint:{"top":.268,"x":.49}
-                    size_hint: 0.2, 0.04
-                    Label_roboto:
-                        # id: label_bottom_ori
-                        text:"DASHBOARD"
-                        size_hint:1,1
-                        font_size:"12sp"
-                        pos_hint: {"center_x":0.5}
-                        color:(0,0,0,1)
-
-            FloatLayout:
-                size_hint:1,1
-                PilLayout:
-                    orientation: "horizontal"
-                    # pos_hint:{"top":.058,"x":.36}
-                    pos_hint:{"top":.058,"x":.27}
-                    Label_roboto:
-                        # id: label_bottom_ori
-                        text:"BATTERY"
-                        size_hint:1,1
-                        font_size:"12sp"
-                        pos_hint: {"center_x":0.27}
-                        color:(0,0,0,1)
-
-            FloatLayout:
-                size_hint:1,1
-                PilLayout:
-                    orientation: "horizontal"
-                    pos_hint:{"top":.058,"x":.392}
-                    size_hint_x: 0.17
-                    canvas:
-                        Color:
-                            rgba:(146/255,218/255,241/255,1)
-                        RoundedRectangle:
-                            size: self.size
-                            pos: self.pos
-                    Label_roboto:
-                        id: tegangan_value_text
-                        text:"tegangan :"
-                        size_hint:1,1
-                        font_size:"12sp"
-                        halign:"left"
-                        color:(0,0,0,1)
+                                            font_size:"68sp"
+                                            halign:"center"
+                                            color: 146/255,218/255,241/255,1
+                                FloatLayout:
+                                    size_hint:1,1
+                                    BoxLayout:
+                                        orientation: "vertical"
+                                        pos_hint:{"top":.4,"x":.17}
+                                        size_hint: .25, .25
+                                        padding:"7dp"
+                                        Label:
+                                            id:SOC_bar_value
+                                            bold: True
+                                            text:"47%"
+                                            font_name:"Roboto"
+                                            font_size:"28sp"
+                                            halign:"center"
+                                            color: 146/255,218/255,241/255,1
+                                        
 
 
-            FloatLayout:
-                size_hint:1,1
-                PilLayout:
-                    orientation: "horizontal"
-                    pos_hint:{"top":.058,"x":.74}
-                    Label_roboto:
-                        # id: label_bottom_ori
-                        text:"VEHICLE"
-                        size_hint:1,1
-                        font_size:"12sp"
-                        pos_hint: {"center_x":0.27}
-                        color:(0,0,0,1)
+                            Screen:
+                                id:test2
+                                name: "screen2"
 
-            FloatLayout:
+                                BoxLayout:
+
+                                    MapView:
+                                        id:mapview
+                                        zoom:12
+                                        lat:-7.2575
+                                        lon:112.7521
+                                        # center_on:(lat,lon)
+                                        
+                                        #map_source: 'osm-hot'
+                                        #map_source: MapSource.MapSource(url='https://tile.thunderforest.com/mobile-atlas/{z}/{x}/{y}.png?apikey=f872d70d2fa74f1c96049845e81a8a99', attribution='')
+                                        map_source: MapSource.MapSource(cache_key='cartodb-darkmatter', url='https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png?apikey=f872d70d2fa74f1c96049845e81a8a99', attribution="@OpenStreet Map - DarkMatter")
+                                        #https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png
+                                        #cache_key='cartodb-darkmatter'
+                                        marker:
+                                        # BoxLayout:
+                                        #     orientation:"vertical"
+                                        #     BoxLayout:
+                                        #         orientation: "horizontal"
+                                        #         padding:"15dp"
+                                        #         MDIconButton:
+                                        #             icon: "arrow-left-bold"
+                                        #             user_font_size: "50sp"
+                                        #             theme_text_color: "Custom"
+                                        #             text_color: app.theme_cls.primary_color
+                                        #             pos_hint:{"left": .5, "center_y": .5}
+
+                                        #         MDIconButton:
+                                        #             icon: "arrow-right-bold"
+                                        #             user_font_size: "50sp"
+                                        #             theme_text_color: "Custom"
+                                        #             text_color: app.theme_cls.primary_color
+                                        #             pos_hint:{"left": .5, "center_y": .5}
+
+                                        #     GridLayout:
+                                        #         cols:1
+
+                                        #     GridLayout:
+                                        #         cols:1
+
+                                        #     GridLayout:
+                                        #         cols:1
+
+                                FloatLayout:
+                                    size_hint:1,1
+                                    BoxLayout:
+                                        orientation: "vertical"
+                                        pos_hint:{"top":.28,"right":.971}
+                                        size_hint_y:.2
+                                        size_hint_x:.55
+                                        # size: lokasi_label.size
+                                        padding:"7dp"
+                                        canvas:
+                                            Color:
+                                                rgba:(146/255,218/255,241/255,1)
+                                            RoundedRectangle:
+                                                size: self.size 
+                                                pos: self.pos
+                                        BoxLayout:
+                                            orientation:"vertical"
+                                            Label_roboto:
+                                                id: lokasi_label
+                                                text:"SAMBUNGKAN INTERNET"
+                                                # size_hint:.5,1
+                                                size:self.size
+                                                font_size:"15sp"
+                                                halign:"left"
+                                                # pos_hint: {"center_x":0.27}
+
+                                            # Label_roboto:
+                                            #     text:"--------------------------"
+                                            #     size_hint:1,1
+                                            #     font_size:"15sp"
+                                            #     halign:"left"
+
+                                            # BoxLayout:
+                                            #     orientation: 'horizontal'
+                                                # MDIconButton:
+                                                #     id: right_icon
+                                                #     icon: "arrow-right"
+                                                #     font_size: "5sp"
+                                                #     pos_hint:{"left": .5, "center_y": .5}
+
+                                            # Label_roboto:
+                                            #     id: label_bottom_dest
+                                            #     text:"ERROR, SAMBUNGKAN INTERNET"
+                                            #     size_hint:1,1
+                                            #     font_size:"15sp"
+                                            #     halign:"left"
+                                    ##pos_hint: {"x": .1, "top": .1}
+
+                            # Screen:
+                            #     id:test3
+                            #     name: "screen3"
+                            #     BoxLayout:
+                            #         size_hint:1,1
+                            #         orientation: "horizontal"
+                            #         canvas:
+                            #             Color:
+                            #                 rgba:(23/255,28/255,35/255,1  )
+                            #             RoundedRectangle:
+                            #                 size: self.size
+                            #                 pos: self.pos
+                            #         ScrollView:
+                            #             MDList:
+                            #                 id: container
+                            #                 theme_text_color: 'Custom'
+                            #                 text_color: 1,1,1,1
+                                            #BaseListItem:
+                                            #    theme_text_color: 'Primary'
+
+                                #MDTextField:
+                                #    id: tujuan
+                            #    hint_text: "input alamat"
+                            #    mode: "rectangle"
+                            #    pos_hint: {"left":1}
+                            #    size_hint: .4,1
+                            #    multiline: False
+                            #    write_tab: False
+                            #MDFillRoundFlatButton:
+                            #    id: button_estimasi
+                            #    pos_hint: {"center_x": .5, "center_y": .5}
+                            #    text: "estimasi"
+                            #    #color: 1,1,1,1
+                            #    size_hint:0.2,0.7
+                                #on_press: root.estimasi()
+                                #on_release: root.move_maps()
+                                #on_release: root.center_maps()
+                                #on_release: root.move_s_mini2()
+                                #on_release: root.move_menubar_left2()
+                                #on_release:root.estimasi()
+                                #icon_right:xxxxxxxxxxxxx "card-search-outline"
+                            #normal_color: app.theme_cls.accent_color
+
+#
+                    BoxLayout:
+                        size_hint: 1, 0.25
+                        # padding:"25dp"
+                        spacing: 15
+                        orientation:"horizontal"
+
+                        BoxLayout:
+                            size_hint: 0.4, 1
+                            padding:'25sp'
+                            canvas:
+                                Color:
+                                    rgba:(23/255,28/255,35/255,1  )
+                                RoundedRectangle:
+                                    size: self.size
+                                    pos: self.pos
+                            # padding:"25dp"
+                            # spacing: 10
+                        #     MDIconButton:
+                        #         icon: "battery-medium"
+                        #         user_font_size: "50sp"
+                        # #Rotate:
+                        # #    angle: 45
+                        # #    origin: self.center
+
+                        #         theme_text_color: "Custom"
+                        #         text_color: app.theme_cls.primary_color
+                        #         pos_hint:{"left": .5, "center_y": .5}
+
+                            BoxLayout:
+                                size_hint: 1,1
+                                orientation:"horizontal"
+                                spacing:5
+                                Label:
+                                    text:"SOC :"
+                                    # font_style: "Head1"
+                                    font_name:"Roboto"
+                                    font_size:"20sp"
+                                    halign:"left"
+                                    size_hint:0.3,1
+
+                                Label:
+                                    id: SOC_value
+                                    size_hint:0.7,1
+                                    text:""
+                                    #font_style: "Body2"
+                                    font_name:"Roboto"
+                                    font_size:"32sp"
+                                    halign:"right"
+
+                        # BoxLayout:
+                        #     size_hint: .1,1
+                        BoxLayout:
+                            size_hint: 0.45, 1
+                            padding:'25sp'
+                            canvas:
+                                Color:
+                                    rgba:(23/255,28/255,35/255,1  )
+                                RoundedRectangle:
+                                    size: self.size
+                                    pos: self.pos
+                            # spacing:10
+                            # padding:"25dp"
+                            # MDIconButton:
+                            #     icon: "speedometer"
+                            #     user_font_size: "50sp"
+                            #     theme_text_color: "Custom"
+                            #     text_color: app.theme_cls.primary_color
+                            #     pos_hint:{"left": .5, "center_y": .5}
+
+                            BoxLayout:
+                                size_hint: 1,1
+                                orientation:"horizontal"
+                                spacing:5
+                                #Label:
+                                #    text:"Speed :"
+                                #    font_style: "Body2"
+                                #    font_name:"Roboto"
+
+                                Label:
+                                    text:"SPEED :"
+                                    # font_style: "Head1"
+                                    font_name:"Roboto"
+                                    font_size:"20sp"
+                                    halign:"left"
+                                    size_hint:0.3,1
+
+                                Label:
+                                    id:speed_value
+                                    size_hint:0.7,1
+                                    text:""
+                                    font_name:"Roboto"
+                                    font_size:"32sp"
+                                    halign:"right"
+    FloatLayout:
+        size_hint:1,1
+        PilLayout:
+            orientation: "horizontal"
+            pos_hint:{"top":.835,"x":.07}
+            Label_roboto:
+                id: mode_label
+                
+                text:"MODE"
                 size_hint:1,1
-                PilLayout:
-                    orientation: "horizontal"
-                    pos_hint:{"top":.263,"x":.0475}
-                    size_hint: 0.15, 0.04
-                    Label_roboto:
-                        id: card_label
-                        text:"APLIKASI"
-                        size_hint:1,1
-                        font_size:"12sp"
-                        pos_hint: {"center_x":0.27}
-                        color:(0,0,0,1)
+                font_size:"12sp"
+                pos_hint: {"center_x":0.27}
+                color:(0,0,0,1)
+
+    FloatLayout:
+        size_hint:1,1
+        PilLayout:
+            orientation: "horizontal"
+            pos_hint:{"top":.645,"x":.07}
+            Label_roboto:
+                id: suhu_label
+                text:"POWER"
+                size_hint:1,1
+                font_size:"12sp"
+                pos_hint: {"center_x":0.27}
+                color:(0,0,0,1)
+                
+    FloatLayout:
+        size_hint:1,1
+        PilLayout:
+            orientation: "horizontal"
+            pos_hint:{"top":.268,"x":.49}
+            size_hint: 0.2, 0.04
+            Label_roboto:
+                # id: label_bottom_ori
+                text:"DASHBOARD"
+                size_hint:1,1
+                font_size:"12sp"
+                pos_hint: {"center_x":0.5}
+                color:(0,0,0,1)
+
+    FloatLayout:
+        size_hint:1,1
+        PilLayout:
+            orientation: "horizontal"
+            # pos_hint:{"top":.058,"x":.36}
+            pos_hint:{"top":.058,"x":.27}
+            Label_roboto:
+                # id: label_bottom_ori
+                text:"BATTERY"
+                size_hint:1,1
+                font_size:"12sp"
+                pos_hint: {"center_x":0.27}
+                color:(0,0,0,1)
+
+    FloatLayout:
+        size_hint:1,1
+        PilLayout:
+            orientation: "horizontal"
+            pos_hint:{"top":.058,"x":.392}
+            size_hint_x: 0.17
+            canvas:
+                Color:
+                    rgba:(146/255,218/255,241/255,1)
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+            Label_roboto:
+                id: tegangan_value_text
+                text:"tegangan :"
+                size_hint:1,1
+                font_size:"12sp"
+                halign:"left"
+                color:(0,0,0,1)
+
+
+    FloatLayout:
+        size_hint:1,1
+        PilLayout:
+            orientation: "horizontal"
+            pos_hint:{"top":.058,"x":.74}
+            Label_roboto:
+                # id: label_bottom_ori
+                text:"VEHICLE"
+                size_hint:1,1
+                font_size:"12sp"
+                pos_hint: {"center_x":0.27}
+                color:(0,0,0,1)
+
+    FloatLayout:
+        size_hint:1,1
+        PilLayout:
+            orientation: "horizontal"
+            pos_hint:{"top":.263,"x":.0475}
+            size_hint: 0.15, 0.04
+            Label_roboto:
+                id: card_label
+                text:"APLIKASI"
+                size_hint:1,1
+                font_size:"12sp"
+                pos_hint: {"center_x":0.27}
+                color:(0,0,0,1)
 
             # FloatLayout:
             #     orientation: "horizontal"

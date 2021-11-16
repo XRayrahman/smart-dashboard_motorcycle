@@ -79,8 +79,8 @@ class Gesits(MDApp):
     val = ""
     tuj = ""
     icon = 'logo.svg'
-    global screen_manager
-    screen_manager = ScreenManager()
+    #global screen_manager
+    #screen_manager = ScreenManager()
     jarak_tempuh_total = 0
     def build(self):
         #self.theme_cls.accent_color = "Green"
@@ -96,8 +96,8 @@ class Gesits(MDApp):
 
     def on_start(self):
 
-        self.root.ids.screen_manager.switch_to(self.root.ids.splashScreen)
-        self.subScreen = Clock.schedule_once(self.changeScreen,12)
+        #self.root.ids.screen_manager.switch_to(self.root.ids.splashScreen)
+        #self.subScreen = Clock.schedule_once(self.changeScreen,12)
         
         self.root.ids.switch.active=True
         # self.root.ids.progress.value = 100;
@@ -107,7 +107,7 @@ class Gesits(MDApp):
         self.root.ids.speed_bar_value.text = speeds
         speed_value = "%s km/h" %(str(speed))
         self.root.ids.speed_value.text = speed_value
-        print(speed_value)
+        # print(speed_value)
         #baca tegangan
         # with open('file.txt')
 
@@ -120,11 +120,16 @@ class Gesits(MDApp):
         SOC_value = str(SOC_value)+"%"
         self.root.ids.SOC_value.text = SOC_value
         self.root.ids.SOC_bar_value.text = SOC_value
-        print(SOC_value)
-        print(Clock.max_iteration)
+        # print(SOC_value)
+        # print(Clock.max_iteration)
         self.sub1 = Clock.schedule_interval(self.update_time, 5)
         self.sub2 = Clock.schedule_interval(self.update_data, 1)
         self.sub2 = Clock.schedule_interval(self.odometer, 1)
+        self.asyncRun = Clock.schedule_once(self.asyncProgram,10)
+
+    def asyncProgram(self,dt):
+        Popen("python read_tegangan.py", shell=True);
+        Popen("python rfcomm_server.py", shell=True);
 
     def changeScreen(self,dt):
         self.root.ids.screen_manager.transition = RiseInTransition()
@@ -365,7 +370,7 @@ class MyLayout(Screen):
         self.ids.screendget_mini.switch_to(self.ids.s_mini1)
 
     def estimasi(self, userinput, SOC_value):
-        lay = MyLayout()
+        # lay = MyLayout()
         #path_to_kv_file = "test.kv"
         this_path = str(os.getcwd())
         path = this_path+"/.key/api-key.txt"
@@ -693,15 +698,22 @@ class NavBar(FakeRectangularElevationBehavior, MDFloatLayout):
 
 #     def dismiss_popup(self, dt):
 #         self.dismiss()
-        
+def reset():
+    import kivy.core.window as window
+    from kivy.base import EventLoop
+    if not EventLoop.event_listeners:
+        from kivy.cache import Cache
+        window.Window = window.core_select_lib('window', window.window_impl, True)
+        Cache.print_usage()
+        for cat in Cache._categories:
+            Cache._objects[cat] = {}   
 
 #MyLayout.estimasi.has_been_called = False
-lay = MyLayout()
-back1 = Popen("python read_tegangan.py", shell=True);
-blu = Popen("python rfcomm_server.py", shell=True);
+# lay = MyLayout()
+reset()
 Gesits().run()
-os.system("sudo killall python")
-os.system("exit")
+# os.system("sudo killall python")
+# os.system("exit")
 
 ##ifi = Popen("python3 testing.py", shell=True);
 #stdout = blu.communicate()
