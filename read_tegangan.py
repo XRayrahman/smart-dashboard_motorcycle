@@ -6,10 +6,17 @@ import json
 
 try:
     os.system("sudo chmod 777 /dev/ttyUSB0")
-    ser = serial.Serial('/dev/ttyUSB0',9600, timeout = 5)
+    ser = serial.Serial('/dev/ttyUSB0',9600, timeout=5)
 except:
-    os.system("sudo chmod 777 /dev/ttyUSB1")
-    ser = serial.Serial('/dev/ttyUSB1',9600, timeout = 5)
+    try:
+        os.system("sudo chmod 777 /dev/ttyUSB1")
+        ser = serial.Serial('/dev/ttyUSB1',9600, timeout=5)
+    except:
+        try:
+            os.system("sudo chmod 777 /dev/ttyUSB2")
+            ser = serial.Serial('/dev/ttyUSB2', 9600, timeout=5)
+        except:
+            pass
 
 
 # val1 = ""

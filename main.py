@@ -70,7 +70,7 @@ from kivy.base import ExceptionHandler, ExceptionManager
 
 #Window.borderless = True
 # Window.size=(800,480)
-Window.fullscreen = True
+#Window.fullscreen = True
 # Window.maximize()
 
 class Gesits(MDApp):
@@ -81,7 +81,7 @@ class Gesits(MDApp):
     icon = 'logo.svg'
     global screen_manager
     screen_manager = ScreenManager()
-
+    jarak_tempuh_total = 0
     def build(self):
         #self.theme_cls.accent_color = "Green"
         self.theme_cls.theme_style = "Dark"
@@ -99,6 +99,7 @@ class Gesits(MDApp):
         self.root.ids.screen_manager.switch_to(self.root.ids.splashScreen)
         self.subScreen = Clock.schedule_once(self.changeScreen,12)
         
+        self.root.ids.switch.active=True
         # self.root.ids.progress.value = 100;
         speed = 47
         self.root.ids.speed_bar.value = speed
@@ -123,6 +124,7 @@ class Gesits(MDApp):
         print(Clock.max_iteration)
         self.sub1 = Clock.schedule_interval(self.update_time, 5)
         self.sub2 = Clock.schedule_interval(self.update_data, 1)
+        self.sub2 = Clock.schedule_interval(self.odometer, 1)
 
     def changeScreen(self,dt):
         self.root.ids.screen_manager.transition = RiseInTransition()
@@ -138,16 +140,17 @@ class Gesits(MDApp):
             rt = open('datastore.json')
             data = json.load(rt)
             tegangan = data['tegangan']
-            kecepatan = data['kecepatan']
+            self.kecepatan = data['kecepatan']
         except:
             pass
         # if tegangan == 0.00:
         #     pass
         # else:
         # self.tegangan = tegangan
-        SOC_text = "TEGANGAN : "+str(tegangan)+" V"
+        strtegangan = str(tegangan)
+        SOC_text = "TEGANGAN : "+ strtegangan +" V"
         self.root.ids.tegangan_value_text.text = SOC_text
-        valtegangan = float(tegangan)
+        valtegangan = float(strtegangan)
         if valtegangan >= 71:
             SOC_value = round(90+((valtegangan-71)*10),1)
         elif valtegangan <= 63:
@@ -155,18 +158,53 @@ class Gesits(MDApp):
         else:
             SOC_value = round(90-((71-valtegangan)*.11428),1)
 
-        # SOC_value = round((float(tegangan)/3)*100, 1)
+        # SOC_value = round((float(strtegangan)/3)*100, 1)
         self.root.ids.SOC_bar.value = SOC_value
         self.SOC_value = str(SOC_value)+"%"
         self.root.ids.SOC_value.text = self.SOC_value
         self.root.ids.SOC_bar_value.text = self.SOC_value
 
         #kecepatan
+        kecepatan = float(self.kecepatan)*185.5*0.036
         self.root.ids.speed_bar.value = float(kecepatan)
         speeds = str(kecepatan)
         self.root.ids.speed_bar_value.text = speeds
         speed_value = "%s km/h" %(speeds)
         self.root.ids.speed_value.text = speed_value
+
+    def odometer(self,nap):
+        # tegangan = 0.00
+        if self.sw_started:
+            self.sw_seconds += nap
+
+        try :
+            rt = open('odometer.json')
+            data = json.load(rt)
+            odo = data['total_km']
+        except:
+            pass
+        
+        
+        jarak_tempuh = float(self.kecepatan)*185.5*0.00001
+        self.jarak_tempuh_total = self.jarak_tempuh_total + jarak_tempuh
+        # self.jarak_tempuh_total = self.jarak_tempuh_total + jarak_tempuh
+        self.root.ids.odometer.text = str(self.jarak_tempuh_total)
+        odo = self.jarak_tempuh_total
+        # odo = "0.123"
+
+        odometer = {
+            "odo": odo
+        }
+
+        if len(str(data)) != 0:
+            file = "odometer.json"
+            with open(file, 'w') as file_object:  #open the file in write mode
+                json.dump(odometer, file_object, indent=4)
+            # print(data_json)
+        else:
+            print("Time out! Exit.\n")
+            pass
+        
         
 
     def update_time(self, nap):

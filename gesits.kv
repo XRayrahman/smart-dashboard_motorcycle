@@ -180,7 +180,7 @@
                                             Label_roboto:
                                                 id: mode_speed
                                                 text: "NORMAL"
-                                                font_size: "32sp"
+                                                font_size: "24sp"
                                                 pos_hint: {"center_x": .5, "center_y": .5}
 
                                         CardLayout:
@@ -194,11 +194,18 @@
                                             #     theme_text_color: "Custom"
                                             #     text_color: app.theme_cls.primary_color
                                             #     pos_hint:{"left": .1, "center_y": .5}
-                                            Label_roboto:
-                                                id: suhu
-                                                text: "37 °C"
-                                                font_size: "32sp"
-                                                pos_hint: {"center_x": .5, "center_y": .5}
+                                            # Label_roboto:
+                                            #     id: suhu
+                                            #     text: "37 °C"
+                                            #     font_size: "32sp"
+                                            #     pos_hint: {"center_x": .5, "center_y": .5}
+
+                                            BoxLayout:  
+                                                Switch:
+                                                    id: switch
+                                                    bg_color: rgba(57/255,255/255,20/255,1)
+                                                # Label:
+                                                #     text: 'ON' if switch.active else 'OFF'
 
                                 Screen:
                                     id: menubar_leftTop2
@@ -289,6 +296,7 @@
                                     id: qr
                                     data: 'Hello World'
                                     size_hint:0.8,0.8
+
                                 Label_roboto:
                                     text: 'Motor ID: \nJ1234DS'
                                     font_size:'12sp'
@@ -348,13 +356,16 @@
                                             BoxLayout:
                                                 size_hint: 0.7, 1
                                                 padding: "25dp"
+                                                orientation: 'vertical'
+                                                BoxLayout:
+                                                    size_hint: 1, 0.4
                                                 SpeedMeter:
                                                     size_hint:1,1
                                                     id: SOC_bar
                                                     max: 100
                                                     tick: 300
-                                                    start_angle: -90
-                                                    end_angle: 180
+                                                    start_angle: -180
+                                                    end_angle: 90
                                                     subtick: 3
                                                     # label: 'km/h'
                                                     value:
@@ -370,11 +381,11 @@
                                                 SpeedMeter:
                                                     size_hint:1,1
                                                     id: speed_bar
-                                                    max: 100
-                                                    tick: 300
+                                                    max: 105
+                                                    tick: 10
                                                     start_angle: -90
                                                     end_angle: 180
-                                                    subtick: 3
+                                                    subtick: 5
                                                     # label: 'km/h'
                                                     value:
                                                     cadran_color: '#171C23'
@@ -410,13 +421,36 @@
                                             size_hint:1,1
                                             BoxLayout:
                                                 orientation: "vertical"
-                                                pos_hint:{"top":1,"x":.83}
+                                                # pos_hint:{"top":1,"x":.83}
+                                                pos_hint: {"top": .93,"x": 0.001}
                                                 size_hint: .2, .2
                                                 padding:"7dp"                            
                                                 Label_roboto:
                                                     id: time
                                                     font_size:20
                                                     text: '[b]00[/b]:00'
+                                        FloatLayout:
+                                            size_hint:1,1
+                                            BoxLayout:
+                                                orientation: "vertical"
+                                                pos_hint:{"top":.9,"x":.17}
+                                                size_hint: .18, .12
+                                                bg_color:
+                                                padding:"7dp"
+                                                canvas:
+                                                    Color:
+                                                        rgba:(15/255,18/255,23/255,1)
+                                                    RoundedRectangle:
+                                                        size: self.size
+                                                        pos: self.pos
+                                                Label:
+                                                    id:odometer
+                                                    bold: True
+                                                    text:"000147"
+                                                    font_name:"Roboto"
+                                                    font_size:"24sp"
+                                                    halign:"center"
+                                                    color: 146/255,218/255,241/255,1
                                         FloatLayout:
                                             size_hint:1,1
                                             BoxLayout:
@@ -436,7 +470,7 @@
                                             size_hint:1,1
                                             BoxLayout:
                                                 orientation: "vertical"
-                                                pos_hint:{"top":.5,"x":.001}
+                                                pos_hint:{"top":.4,"x":.17}
                                                 size_hint: .25, .25
                                                 padding:"7dp"
                                                 Label:
@@ -703,7 +737,7 @@
                     pos_hint:{"top":.645,"x":.07}
                     Label_roboto:
                         id: suhu_label
-                        text:"SUHU"
+                        text:"POWER"
                         size_hint:1,1
                         font_size:"12sp"
                         pos_hint: {"center_x":0.27}
