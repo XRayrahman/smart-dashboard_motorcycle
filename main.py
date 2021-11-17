@@ -138,21 +138,24 @@ class Gesits(MDApp):
     #update data, untuk sekarang hanya SOC
     def update_data(self,nap):
         # tegangan = 0.00
+        strtegangan = "0.0"
         if self.sw_started:
             self.sw_seconds += nap
 
         try :
             rt = open('datastore.json')
             data = json.load(rt)
-            tegangan = data['tegangan']
+            strtegangan = data['tegangan']
             self.kecepatan = data['kecepatan']
         except:
-            pass
-        # if tegangan == 0.00:
+            strtegangan = "0.00"
+            self.kecepatan = "0.00"
+           
+        # if data_tegangan == 0.00:
         #     pass
         # else:
         # self.tegangan = tegangan
-        strtegangan = str(tegangan)
+        #strtegangan = data_tegangan
         SOC_text = "TEGANGAN : "+ strtegangan +" V"
         self.root.ids.tegangan_value_text.text = SOC_text
         valtegangan = float(strtegangan)
@@ -171,6 +174,7 @@ class Gesits(MDApp):
 
         #kecepatan
         kecepatan = float(self.kecepatan)*185.5*0.036
+        kecepatan = (format(float(kecepatan), ".0f"))
         self.root.ids.speed_bar.value = float(kecepatan)
         speeds = str(kecepatan)
         self.root.ids.speed_bar_value.text = speeds
@@ -179,26 +183,29 @@ class Gesits(MDApp):
 
     def odometer(self,nap):
         # tegangan = 0.00
+        #odo = "0.0"
         if self.sw_started:
             self.sw_seconds += nap
 
-        try :
-            rt = open('odometer.json')
-            data = json.load(rt)
+        try:
+            opdata = open('odometer.json')
+            data = json.load(opdata)
             odo = data['total_km']
         except:
-            pass
+            odo = "0.0"
         
-        
+        self.jarak_tempuh_total = float(odo)
         jarak_tempuh = float(self.kecepatan)*185.5*0.00001
+        #jarak_tempuh = format(float(jarak_tempuh), ".0f")
         self.jarak_tempuh_total = self.jarak_tempuh_total + jarak_tempuh
         # self.jarak_tempuh_total = self.jarak_tempuh_total + jarak_tempuh
-        self.root.ids.odometer.text = str(self.jarak_tempuh_total)
-        odo = self.jarak_tempuh_total
+        
+        self.root.ids.odometer.text = format(float(self.jarak_tempuh_total), ".2f")
+        odo = format(float(self.jarak_tempuh_total), ".2f")
         # odo = "0.123"
 
         odometer = {
-            "odo": odo
+            "total_km": odo
         }
 
         if len(str(data)) != 0:

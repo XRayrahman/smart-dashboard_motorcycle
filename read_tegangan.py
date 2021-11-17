@@ -39,7 +39,6 @@ while True:
         except:
             tegangan="0.00"
             kecepatan="0.00"
-            pass
 
         data_json = {
             "tegangan": tegangan,
