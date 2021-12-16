@@ -160,11 +160,11 @@ class Gesits(MDApp):
         self.root.ids.tegangan_value_text.text = SOC_text
         valtegangan = float(strtegangan)
         if valtegangan >= 71:
-            SOC_value = round(90+((valtegangan-71)*10),1)
-        elif valtegangan <= 63:
-            SOC_value = round(30-((63-valtegangan)*.476),1)
+            SOC_value = round(90+((valtegangan-71)/1.4),1)
+        elif valtegangan <= 60:
+            SOC_value = round(30-((60-valtegangan)/2),1)
         else:
-            SOC_value = round(90-((71-valtegangan)*.11428),1)
+            SOC_value = round(90-((70-valtegangan)*6),1)
 
         # SOC_value = round((float(strtegangan)/3)*100, 1)
         self.root.ids.SOC_bar.value = SOC_value
@@ -207,14 +207,16 @@ class Gesits(MDApp):
         odometer = {
             "total_km": odo
         }
-
-        if len(str(data)) != 0:
-            file = "odometer.json"
-            with open(file, 'w') as file_object:  #open the file in write mode
-                json.dump(odometer, file_object, indent=4)
-            # print(data_json)
-        else:
-            print("Time out! Exit.\n")
+        try:
+            if len(str(data)) != 0:
+                file = "odometer.json"
+                with open(file, 'w') as file_object:  #open the file in write mode
+                    json.dump(odometer, file_object, indent=4)
+                # print(data_json)
+            else:
+                print("Time out! Exit.\n")
+                pass
+        except:
             pass
         
         
