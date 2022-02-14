@@ -38,8 +38,9 @@ Kivy==2.0.0
 Kivy-Garden==0.1.4
 kivy-garden.mapview==1.0.5
 kivy-garden.qrcode==2021.314
-kivy-garden.speedmeter==0.1.2
+kivy_garden.speedmeter==0.1.2
 kivymd==0.104.2
+kivymd-extensions.akivymd==1.2.6
 mapview==1.0.5
 MarkupSafe==2.0.1
 matplotlib-inline==0.1.3

@@ -1,39 +1,39 @@
-from logging import root
+# from logging import root
 from kivymd.app import MDApp
 import os
 # os.environ["KIVY_TEXT"] = "pil"
 #from kivy.uix.label import Label
-from kivy.animation import Animation
-from kivy.factory import Factory
-from kivy.core.window import Window
-from kivy.uix.popup import Popup
-from kivy.uix.label import Label
+# from kivy.animation import Animation
+# from kivy.factory import Factory
+# from kivy.core.window import Window
+# from kivy.uix.popup import Popup
+# from kivy.uix.label import Label
 from kivy.clock import Clock
 from kivymd.uix.behaviors import FakeRectangularElevationBehavior
-from kivy.uix.boxlayout import BoxLayout
-from kivymd.theming import ThemableBehavior
+# from kivy.uix.boxlayout import BoxLayout
+# from kivymd.theming import ThemableBehavior
 from kivymd.uix.floatlayout import MDFloatLayout
-from kivymd.uix.list import OneLineListItem
+# from kivymd.uix.list import OneLineListItem
 from kivymd.uix.dialog import MDDialog
-from kivy.lang import Builder
+# from kivy.lang import Builder
 #from kivy.uix.widget import Widget
 from kivy.uix.screenmanager import RiseInTransition,FadeTransition, ScreenManager, Screen
 #from googlemaps import convert
 import requests
 #import smtplib
-import googlemaps
-import pandas as pd
-import numpy as np
+# import googlemaps
+# import pandas as pd
+# import numpy as np
 import joblib
 #import cefpython3 as cef
 import requests
 import json
-import http.client
-from datetime import datetime
+# import http.client
+# from datetime import datetime
 from time import strftime
 from math import *
-import time
-import urllib
+# import time
+# import urllib
 import subprocess
 from subprocess import Popen, PIPE, STDOUT
 #import asyncio
@@ -80,7 +80,7 @@ class Gesits(MDApp):
     tuj = ""
     icon = 'logo.svg'
     #global screen_manager
-    #screen_manager = ScreenManager()
+    screen_manager = ScreenManager()
     jarak_tempuh_total = 0
     def build(self):
         #self.theme_cls.accent_color = "Green"
@@ -96,8 +96,8 @@ class Gesits(MDApp):
 
     def on_start(self):
 
-        #self.root.ids.screen_manager.switch_to(self.root.ids.splashScreen)
-        #self.subScreen = Clock.schedule_once(self.changeScreen,12)
+        self.root.ids.screen_manager.switch_to(self.root.ids.splashScreen)
+        self.subScreen = Clock.schedule_once(self.changeScreen,12)
         
         self.root.ids.switch.active=True
         # self.root.ids.progress.value = 100;
@@ -135,7 +135,7 @@ class Gesits(MDApp):
         self.root.ids.screen_manager.transition = RiseInTransition()
         self.root.ids.screen_manager.switch_to(self.root.ids.mainScreen)
 
-    #update data, untuk sekarang hanya SOC
+    #update data SOC dan kecepatan
     def update_data(self,nap):
         # tegangan = 0.00
         strtegangan = "0.0"
@@ -159,12 +159,18 @@ class Gesits(MDApp):
         SOC_text = "TEGANGAN : "+ strtegangan +" V"
         self.root.ids.tegangan_value_text.text = SOC_text
         valtegangan = float(strtegangan)
-        if valtegangan >= 71:
-            SOC_value = round(90+((valtegangan-71)/1.4),1)
-        elif valtegangan <= 60:
-            SOC_value = round(30-((60-valtegangan)/2),1)
+        # if valtegangan >= 71:
+        #     SOC_value = round(90+((valtegangan-71)/1.4),1)
+        # elif valtegangan <= 60:
+        #     SOC_value = round(30-((60-valtegangan)/2),1)
+        # else:
+        #     SOC_value = round(90-((70-valtegangan)*6),1)
+        if valtegangan >= 7:
+            SOC_value = round(20+((valtegangan-7)/2.5),1)
+        elif valtegangan <= 6:
+            SOC_value = round(10-((6-valtegangan)/0.6),1)
         else:
-            SOC_value = round(90-((70-valtegangan)*6),1)
+            SOC_value = round(20-((7-valtegangan)/0.1),1)
 
         # SOC_value = round((float(strtegangan)/3)*100, 1)
         self.root.ids.SOC_bar.value = SOC_value
