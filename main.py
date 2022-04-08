@@ -5,7 +5,7 @@ import os
 #from kivy.uix.label import Label
 # from kivy.animation import Animation
 # from kivy.factory import Factory
-# from kivy.core.window import Window
+from kivy.core.window import Window
 # from kivy.uix.popup import Popup
 # from kivy.uix.label import Label
 from kivy.clock import Clock
@@ -61,17 +61,17 @@ from kivy.properties import (
 )
 #Clock.max_iteration = 50
 from kivy.base import ExceptionHandler, ExceptionManager
-# from kivy.config import Config
-# Config.set('graphics', 'width', '800')
-# Config.set('graphics', 'height', '480')
-# Config.write()
+from kivy.config import Config
+Config.set('graphics', 'width', '800')
+Config.set('graphics', 'height', '480')
+Config.write()
 #import rfcomm_server
 #from kivy.garden.cefpython import CEFBrowser
 
-#Window.borderless = True
-# Window.size=(800,480)
+Window.borderless = True
+#Window.size=(800,480)
 #Window.fullscreen = True
-# Window.maximize()
+Window.maximize()
 
 class Gesits(MDApp):
     sw_started= False
@@ -97,11 +97,12 @@ class Gesits(MDApp):
     def on_start(self):
 
         self.root.ids.screen_manager.switch_to(self.root.ids.splashScreen)
-        self.subScreen = Clock.schedule_once(self.changeScreen,12)
+        self.subScreen = Clock.schedule_once(self.changeScreen,11)
         
         self.root.ids.switch.active=True
         # self.root.ids.progress.value = 100;
         speed = 47
+        self.jarak_sebelumnya = 0
         self.root.ids.speed_bar.value = speed
         speeds = str(speed)
         self.root.ids.speed_bar_value.text = speeds
@@ -125,6 +126,7 @@ class Gesits(MDApp):
         self.sub1 = Clock.schedule_interval(self.update_time, 5)
         self.sub2 = Clock.schedule_interval(self.update_data, 1)
         self.sub2 = Clock.schedule_interval(self.odometer, 1)
+        self.sub3 = Clock.schedule_interval(self.odometer_submit, 5)
         self.asyncRun = Clock.schedule_once(self.asyncProgram,10)
 
     def asyncProgram(self,dt):
@@ -159,18 +161,19 @@ class Gesits(MDApp):
         SOC_text = "TEGANGAN : "+ strtegangan +" V"
         self.root.ids.tegangan_value_text.text = SOC_text
         valtegangan = float(strtegangan)
-        # if valtegangan >= 71:
-        #     SOC_value = round(90+((valtegangan-71)/1.4),1)
-        # elif valtegangan <= 60:
-        #     SOC_value = round(30-((60-valtegangan)/2),1)
-        # else:
-        #     SOC_value = round(90-((70-valtegangan)*6),1)
-        if valtegangan >= 7:
-            SOC_value = round(20+((valtegangan-7)/2.5),1)
-        elif valtegangan <= 6:
-            SOC_value = round(10-((6-valtegangan)/0.6),1)
+        if valtegangan >= 71:
+            SOC_value = round(80+((valtegangan-71)/0.7),1)
+        elif valtegangan <= 60:
+            SOC_value = round(0,1)
+            # SOC_value = round(30-((60-valtegangan)/2),1)
         else:
-            SOC_value = round(20-((7-valtegangan)/0.1),1)
+            SOC_value = round(80-((70-valtegangan)/0.1125),1)
+        # if valtegangan >= 7:
+        #     SOC_value = round(20+((valtegangan-7)/2.5),1)
+        # elif valtegangan <= 6:
+        #     SOC_value = round(10-((6-valtegangan)/0.6),1)
+        # else:
+        #     SOC_value = round(20-((7-valtegangan)/0.1),1)
 
         # SOC_value = round((float(strtegangan)/3)*100, 1)
         self.root.ids.SOC_bar.value = SOC_value
@@ -179,15 +182,26 @@ class Gesits(MDApp):
         self.root.ids.SOC_bar_value.text = self.SOC_value
 
         #kecepatan
-        kecepatan = float(self.kecepatan)*185.5*0.036
-        kecepatan = (format(float(kecepatan), ".0f"))
-        self.root.ids.speed_bar.value = float(kecepatan)
+        kecepatan = (float(self.kecepatan)/6)*188.4*0.036
+        kecepatan = (format(float(kecepatan), ".1f"))
+        print(kecepatan)
+        self.root.ids.speed_bar.value = kecepatan
         speeds = str(kecepatan)
         self.root.ids.speed_bar_value.text = speeds
         speed_value = "%s km/h" %(speeds)
         self.root.ids.speed_value.text = speed_value
 
+
     def odometer(self,nap):
+        # tegangan = 0.00
+        #odo = "0.0"
+        if self.sw_started:
+            self.sw_seconds += nap  
+        jarak_tempuh = (float(self.kecepatan)/6)*188.4*0.00001
+        self.jarak_tempuh_total_lima = jarak_tempuh + self.jarak_sebelumnya
+        self.jarak_sebelumnya = jarak_tempuh
+
+    def odometer_submit(self,nap):
         # tegangan = 0.00
         #odo = "0.0"
         if self.sw_started:
@@ -197,26 +211,28 @@ class Gesits(MDApp):
             opdata = open('odometer.json')
             data = json.load(opdata)
             odo = data['total_km']
-        except:
-            odo = "0.0"
+        except Exception as e:
+            print('odo error :',str(e) )
+        
         
         self.jarak_tempuh_total = float(odo)
-        jarak_tempuh = float(self.kecepatan)*185.5*0.00001
         #jarak_tempuh = format(float(jarak_tempuh), ".0f")
-        self.jarak_tempuh_total = self.jarak_tempuh_total + jarak_tempuh
+        self.jarak_tempuh_total = self.jarak_tempuh_total + self.jarak_tempuh_total_lima
         # self.jarak_tempuh_total = self.jarak_tempuh_total + jarak_tempuh
-        
-        self.root.ids.odometer.text = format(float(self.jarak_tempuh_total), ".2f")
-        odo = format(float(self.jarak_tempuh_total), ".2f")
-        # odo = "0.123"
-
+    
+        self.total_odo = format(float(self.jarak_tempuh_total), ".5f")
+        self.root.ids.odometer.text = format(float(self.total_odo), ".5f")
+        # except:
         odometer = {
-            "total_km": odo
+            "total_km": self.total_odo
         }
+        # except:
+            # pass
+            
         try:
             if len(str(data)) != 0:
                 file = "odometer.json"
-                with open(file, 'w') as file_object:  #open the file in write mode
+                with open(file, 'w') as file_object: 
                     json.dump(odometer, file_object, indent=4)
                 # print(data_json)
             else:
@@ -224,7 +240,12 @@ class Gesits(MDApp):
                 pass
         except:
             pass
+            # pass
+        # odo = "0.123"
         
+        # try:
+        
+
         
 
     def update_time(self, nap):
@@ -725,9 +746,9 @@ def reset():
 
 #MyLayout.estimasi.has_been_called = False
 # lay = MyLayout()
-reset()
+# reset()
 Gesits().run()
-# os.system("sudo killall python")
+os.system("sudo killall python")
 # os.system("exit")
 
 ##ifi = Popen("python3 testing.py", shell=True);
