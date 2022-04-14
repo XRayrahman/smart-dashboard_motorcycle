@@ -499,7 +499,9 @@
                                                 
                                                 #map_source: 'osm-hot'
                                                 #map_source: MapSource.MapSource(url='https://tile.thunderforest.com/mobile-atlas/{z}/{x}/{y}.png?apikey=f872d70d2fa74f1c96049845e81a8a99', attribution='')
+
                                                 map_source: MapSource.MapSource(cache_key='cartodb-darkmatter', url='https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png?apikey=f872d70d2fa74f1c96049845e81a8a99', attribution="@OpenStreet Map - DarkMatter")
+                                                
                                                 #https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png
                                                 #cache_key='cartodb-darkmatter'
                                                 marker:
@@ -537,12 +539,12 @@
                                                 orientation: "vertical"
                                                 pos_hint:{"top":.28,"right":.971}
                                                 size_hint_y:.2
-                                                size_hint_x:.55
+                                                size_hint_x:.95
                                                 # size: lokasi_label.size
                                                 padding:"7dp"
                                                 canvas:
                                                     Color:
-                                                        rgba:(146/255,218/255,241/255,1)
+                                                        rgba:(23/255,28/255,35/255,1)
                                                     RoundedRectangle:
                                                         size: self.size 
                                                         pos: self.pos
@@ -825,48 +827,3 @@
                 #spacing:"30dp"
                 #padding:"5dp"
                 pos_hint: {"top": .2, "right": 1}
-
-                #canvas:
-                #    Color:
-                #        rgba:(5/255,2/255,21/255,1)
-                #    RoundedRectangle:
-                #        size: self.size
-                #        pos: self.pos
-                #NavBar:
-                #    size_hint: .75,.9
-                #    pos_hint: {"right":1}
-                #    spacing:"10dp"
-                #    padding:"10dp"
-                #    #elevation: 10
-                #    #md_bg_color: 5/255,2/255,21/255,1
-                #    #radius: [10]
-                #    MDGridLayout:
-                #        cols: 3
-                #        size_hint: .9,1
-                #        spacing: 5
-                #        pos_hint: {"center_x": .5, "center_y": .5}
-                #        On_active_button:
-                #            id: nav_icon1
-                #            # icon: "google-maps"
-                #            text: "Maps"
-                #            ripple_scale: 0
-                #            font_size: "30sp"
-                #            on_press: root.move_maps()
-                #        On_active_button:
-                #            id: nav_icon2
-                #            # icon: "speedometer"
-                #            text: "Speed"
-                #            ripple_scale: 0
-                #            font_size: "30sp"
-                #            on_release: root.move_speed()
-                #            on_release: root.move_s_mini1()
-                #            on_release: root.move_menubar_left1()
-                                
-                                
-                                #On_active_button:
-                                #    id: nav_icon3
-                                #    icon: "math-integral"
-                                #    text: "History"
-                                #    ripple_scale: 0
-                                #    font_size: "30sp"
-                                #    on_release: root.move_graph()
