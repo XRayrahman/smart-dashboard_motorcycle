@@ -184,7 +184,7 @@ class Gesits(MDApp):
         #kecepatan
         kecepatan = (float(self.kecepatan)/6)*188.4*0.036
         kecepatan = (format(float(kecepatan), ".1f"))
-        print(kecepatan)
+        # print(kecepatan)
         self.root.ids.speed_bar.value = kecepatan
         speeds = str(kecepatan)
         self.root.ids.speed_bar_value.text = speeds
@@ -355,8 +355,6 @@ class MyLayout(Screen):
     def center_maps(self):
         try:
             mapview = self.ids.mapview
-            self.lat = self.geolat_destination
-            self.lng = self.geolng_destination
             line = LineMapLayer(self.lat, self.lng, self.OriginLat, self.OriginLng)
             mapview.add_layer(line, mode='scatter')
             mapview.center_on(self.OriginLat, self.OriginLng)
@@ -419,70 +417,107 @@ class MyLayout(Screen):
         scaler = joblib.load('std_rev1.bin')
         model = joblib.load('estimasi_rev1.pkl')
 
-        self.origin = (-7.289980, 112.793715) 
-        self.OriginLat = -7.289980
-        self.OriginLng = 112.793715
+        # self.origin = (-7.289980, 112.793715) 
+        # self.OriginLat = -7.289980
+        # self.OriginLng = 112.793715
         #destinationinput = urllib.parse.quote(userinput)
         #print(destinationinput)
         placeid_destination = userinput
         
-        try:
-            placeID_Destination_URL = "https://maps.googleapis.com/maps/api/place/details/json?place_id="+placeid_destination+"&key=AIzaSyBxidFA-DVnYjtl9DSNnaVJ3EaOHdY7i50&fields=geometry"
-        except Exception as e:
-            print('INVALID URL',str(e))
-        payload={}
-        headers = {}
-        try:
-            response = requests.request("GET", placeID_Destination_URL, headers=headers, data=payload)
-            #print(DestinationJSON)
-            print(response.text)
-            responseJSON = json.loads(response.text)
-            self.geolat_destination = responseJSON['result']['geometry']['location']['lat']
-            self.geolng_destination = responseJSON['result']['geometry']['location']['lng']
-            self.str_geolat_destination = str(self.geolat_destination)
-            self.str_geolng_destination = str(self.geolng_destination)
-            print(placeid_destination)
-        except Exception as e:
-            print('INVALID REQUEST DESTINATION',str(e))
+        # try:
+        #     placeID_Destination_URL = "https://maps.googleapis.com/maps/api/place/details/json?place_id="+placeid_destination+"&key=AIzaSyBxidFA-DVnYjtl9DSNnaVJ3EaOHdY7i50&fields=geometry"
+        # except Exception as e:
+        #     print('INVALID URL',str(e))
+        # payload={}
+        # headers = {}
+        # try:
+        #     response = requests.request("GET", placeID_Destination_URL, headers=headers, data=payload)
+        #     #print(DestinationJSON)
+        #     print(response.text)
+        #     responseJSON = json.loads(response.text)
+        #     self.geolat_destination = responseJSON['result']['geometry']['location']['lat']
+        #     self.geolng_destination = responseJSON['result']['geometry']['location']['lng']
+        #     self.str_geolat_destination = str(self.geolat_destination)
+        #     self.str_geolng_destination = str(self.geolng_destination)
+        #     print(placeid_destination)
+        # except Exception as e:
+        #     print('INVALID REQUEST DESTINATION',str(e))
 
-        Distancematrix_URL = "https://maps.googleapis.com/maps/api/distancematrix/json?mode=driving&key="+API_key+"&destinations=place_id:"+placeid_destination+"&origins=sukolilo"
-        #-- Parameter Tambahan --
-        #&units=metric&traffic_model=pessimistic
-        #------------------------
-        payload={}
-        headers = {}
-        distanceresp = requests.request("GET", Distancematrix_URL, headers=headers, data=payload)
-        #distanceresp = gmaps.distance_matrix(origin, placeid_destination, mode='driving') ["rows"][0]["elements"][0]["distance"]["value"]
-        #print(DestinationJSON)
-        print(distanceresp.text)
-        
+        self.OriginLat = -7.2849060923904085
+        self.OriginLng = 112.7961434972626
+        self.lat = -7.277094626336178
+        self.lng = 112.7974416864169
+        body = {"locations":[[self.OriginLng,self.OriginLat],[self.lng,self.lat]],"metrics":["distance","duration"],"units":"km"}
+        headers = {
+            'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
+            'Authorization': '5b3ce3597851110001cf6248fee30172e1284561af50061b93def79c',
+            'Content-Type': 'application/json; charset=utf-8'
+        }
+        post_matrix = requests.post('https://api.openrouteservice.org/v2/matrix/driving-car', json=body, headers=headers)
+
         try:
-            distanceJSON = json.loads(distanceresp.text)
-            Tdistance = distanceJSON['rows'][0]['elements'][0]['distance']['value']
-            Ddistance = distanceJSON['rows'][0]['elements'][0]['distance']['text']
-            DtimeEst = distanceJSON['rows'][0]['elements'][0]['duration']['text']
-            self.ids.DummyDistance.text = Ddistance
-            self.ids.DummyTimeEst.text = DtimeEst
-            Tdestination = distanceJSON['destination_addresses'][0]
-            Tdestination = Tdestination.split(",")
-            Tdestination = Tdestination[0:1]
-            Tdestination = ','.join(Tdestination)
-            Torigin = distanceJSON['origin_addresses'][0]
-            Torigin = Torigin.split(",")
-            Torigin = Torigin[0:2]
-            Torigin = ','.join(Torigin)
-            self.ids.lokasi_label.text = "ASAL        :  %s\nTUJUAN   :  %s" %(Torigin,Tdestination)
-            # self.ids.label_bottom_ori.text = Torigin
-            # self.ids.right_icon.icon = "arrow-right"
-            #arrow-right-thin-circle-outline
-            TrueDistance = Tdistance/1000
-            print(TrueDistance)
+            data_matrix = json.loads(post_matrix.text)
+            duration = data_matrix['durations'][0][1]
+            TrueDistance = data_matrix['distances'][0][1]
+            self.ids.DummyDistance.text = str(TrueDistance)
+            self.ids.DummyTimeEst.text = str(duration)
+        except Exception as e:
+            print('INVALID REQUEST DISTANCE :',str(e) )
+        
+        headers = {
+            'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
+        }
+        get_geocode_origin = requests.get('https://api.openrouteservice.org/geocode/reverse?api_key=5b3ce3597851110001cf6248fee30172e1284561af50061b93def79c&point.lon='+str(self.OriginLng)+'&point.lat='+str(self.OriginLat)+'&size=2', headers=headers)
+        get_geocode_destination = requests.get('https://api.openrouteservice.org/geocode/reverse?api_key=5b3ce3597851110001cf6248fee30172e1284561af50061b93def79c&point.lon='+str(self.lng)+'&point.lat='+str(self.lat)+'&size=2', headers=headers)
+
+        try:
+            geocode_origin = json.loads(get_geocode_origin.text)
+            geocode_destination = json.loads(get_geocode_destination.text)
+            place_name_origin = geocode_origin["features"][0]["properties"]["label"]
+            place_name_destination = geocode_destination["features"][0]["properties"]["label"]
+            self.ids.lokasi_label.text = "ASAL        :  %s\nTUJUAN   :  %s" %(place_name_origin,place_name_destination)
+            # print(call.status_code, call.reason)
+            print(place_name_destination)
         except Exception as e:
             print('INVALID REQUEST DISTANCE :',str(e) )
 
+        # Distancematrix_URL = "https://maps.googleapis.com/maps/api/distancematrix/json?mode=driving&key="+API_key+"&destinations=place_id:"+placeid_destination+"&origins=sukolilo"
+        # #-- Parameter Tambahan --
+        # #&units=metric&traffic_model=pessimistic
+        # #------------------------
+        # payload={}
+        # headers = {}
+        # distanceresp = requests.request("GET", Distancematrix_URL, headers=headers, data=payload)
+        # #distanceresp = gmaps.distance_matrix(origin, placeid_destination, mode='driving') ["rows"][0]["elements"][0]["distance"]["value"]
+        # #print(DestinationJSON)
+        # print(distanceresp.text)
+        # try:
+        #     distanceJSON = json.loads(distanceresp.text)
+        #     Tdistance = distanceJSON['rows'][0]['elements'][0]['distance']['value']
+        #     Ddistance = distanceJSON['rows'][0]['elements'][0]['distance']['text']
+        #     DtimeEst = distanceJSON['rows'][0]['elements'][0]['duration']['text']
+        #     self.ids.DummyDistance.text = Ddistance
+        #     self.ids.DummyTimeEst.text = DtimeEst
+        #     Tdestination = distanceJSON['destination_addresses'][0]
+        #     Tdestination = Tdestination.split(",")
+        #     Tdestination = Tdestination[0:1]
+        #     Tdestination = ','.join(Tdestination)
+        #     Torigin = distanceJSON['origin_addresses'][0]
+        #     Torigin = Torigin.split(",")
+        #     Torigin = Torigin[0:2]
+        #     Torigin = ','.join(Torigin)
+        #     self.ids.lokasi_label.text = "ASAL        :  %s\nTUJUAN   :  %s" %(Torigin,Tdestination)
+        #     # self.ids.label_bottom_ori.text = Torigin
+        #     # self.ids.right_icon.icon = "arrow-right"
+        #     #arrow-right-thin-circle-outline
+        #     TrueDistance = Tdistance/1000
+        #     print(TrueDistance)
+        # except Exception as e:
+        #     print('INVALID REQUEST DISTANCE :',str(e) )
+
         try:
             SOC_value = self.ids.SOC_value.text
-            print("SOC :",SOC_value)
+            print("SOC : ",SOC_value)
             SOC = SOC_value
             SOC = SOC_value.replace("%","")
             print(float(SOC))
@@ -500,14 +535,14 @@ class MyLayout(Screen):
                 coba = [[float(SOC), float(x), float(length)]]
                 data = scaler.transform(coba)
                 test = model.predict(data)
-                print("estimasi pemakaian energi :",float(x), float(test))
+                print("estimasi pemakaian energi : ",float(x),float(test))
                 if (float(SOC) - (3/100)*5 <= float(test)):
                     if x == eco:
-                        estimasi_eco = "TIDAK"
+                        estimasi_eco = "TIDAK\nCUKUP"
                     elif x == normal:
                         estimasi_normal = "TIDAK\nCUKUP"
                     elif x == sport:
-                        estimasi_sport = "TIDAK"
+                        estimasi_sport = "TIDAK\nCUKUP"
 
                 elif (float(SOC) - (3/100)*5 > float(test)):
                     if x == eco:
@@ -516,14 +551,14 @@ class MyLayout(Screen):
                         estimasi_normal = "CUKUP"
                     elif x == sport:
                         estimasi_sport = "CUKUP"
+            # satu rekomendasi
+            self.ids.recommendation.text = str(estimasi_normal)
         except Exception as e:
             print('estimation error ni :',str(e) )
 
         # tiga rekomendasi
         # self.ids.recommendation.text = "ECO          :  %s\n\nNORMAL  :  %s\n\nSPORT     :  %s" %(estimasi_eco, estimasi_normal, estimasi_sport)
 
-        # satu rekomendasi
-        self.ids.recommendation.text = estimasi_normal
 
         try:
             self.popup = MDDialog(title='Tersambung',
@@ -558,10 +593,10 @@ class LineMapLayer(MapLayer):
 
         #testing Dummies
         #-7.289612, 112.796190
-        #start = "&start=112.796190,-7.289612" 
+        # start = "&start=8.287872,49.420318" 
         start = "&start="+str(OriginLng)+","+str(OriginLat)
         end = "&end="+str(lng)+","+str(lat)
-        #end = "&end=8.687872,49.420318"
+        # end = "&end=8.687872,49.420318"
 
         #Real World Appliaction
         # start = "&start=" + str(startLat) + "," + str(startLng)
@@ -746,13 +781,12 @@ def reset():
 
 #MyLayout.estimasi.has_been_called = False
 # lay = MyLayout()
-# reset()
+reset()
 Gesits().run()
-os.system("sudo killall python")
+# os.system("killall python")
 # os.system("exit")
 
 ##ifi = Popen("python3 testing.py", shell=True);
 #stdout = blu.communicate()
 #blu_val = blu.stdout.read()
 #print(blu_val)
-#print(arch)
