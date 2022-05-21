@@ -27,7 +27,7 @@ while True:
     try:
         line = ser.readline()
         data = line.decode('utf-8')
-        if (data[0]=='{') :
+        if (data[0]=='{' ) :
             data=json.loads(data)
             # print(data)
             # fldata = format(float(data), ".2f")
@@ -46,7 +46,7 @@ while True:
         }
 
         if len(str(data)) != 0:
-            file = "datastore.json"
+            file = "database/datastore.json"
             with open(file, 'w') as file_object:  #open the file in write mode
                 json.dump(data_json, file_object, indent=4)
             # print(data_json)

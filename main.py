@@ -208,7 +208,7 @@ class Gesits(MDApp):
             self.sw_seconds += nap
 
         try:
-            opdata = open('odometer.json')
+            opdata = open('database/odometer.json')
             data = json.load(opdata)
             odo = data['total_km']
         except Exception as e:
@@ -220,8 +220,8 @@ class Gesits(MDApp):
         self.jarak_tempuh_total = self.jarak_tempuh_total + self.jarak_tempuh_total_lima
         # self.jarak_tempuh_total = self.jarak_tempuh_total + jarak_tempuh
     
-        self.total_odo = format(float(self.jarak_tempuh_total), ".5f")
-        self.root.ids.odometer.text = format(float(self.total_odo), ".5f")
+        self.total_odo = format(float(self.jarak_tempuh_total), ".3f")
+        self.root.ids.odometer.text = format(float(self.total_odo), ".3f")
         # except:
         odometer = {
             "total_km": self.total_odo
@@ -253,7 +253,7 @@ class Gesits(MDApp):
             self.sw_seconds += nap
         #tambah detik = :%S
         #self.root.ids.SOC_value.text = "blok"
-        self.root.ids.time.text = strftime('[b]%H[/b]:%M')
+        self.root.ids.time.text = strftime('[b]%H[/b]:%M  |')
         #self.root.ids.recommendation.text = "test1"
 
         #displayAvailableNetworks()
@@ -783,8 +783,8 @@ def reset():
 # lay = MyLayout()
 reset()
 Gesits().run()
-# os.system("killall python")
-# os.system("exit")
+os.system("killall python")
+os.system("exit")
 
 ##ifi = Popen("python3 testing.py", shell=True);
 #stdout = blu.communicate()

@@ -1,4 +1,4 @@
-##:kivy
+#!:kivy
 #:import MapView kivy_garden.mapview
 #:import MapSource kivy_garden.mapview
 
@@ -30,15 +30,16 @@
 #    orientation: "vertical"
 
 <PilLayout@BoxLayout>
-    size_hint: .1, .04
+    size_hint: .1, .05
     padding:"7dp"
     canvas:
         Color:
-            rgba:(146/255,218/255,241/255,1)
+            rgba:(15/255,18/255,23/255,1)
         RoundedRectangle:
             size: self.size
             pos: self.pos
 
+#146/255,218/255,241/255,1
 <RoundCard@MDCard>
     md_bg_color:23/255,28/255,35/255,1
     spacing:"1dp"
@@ -79,6 +80,12 @@
     font_name:"Roboto"
     markup: True
 
+
+<Label_roboto_white@Label>
+    font_name:"Roboto"
+    markup: True
+    color: (1,1,1,1)
+
 <MyLayout>
     screendget_mini:
     ScreenManager:
@@ -100,7 +107,7 @@
                 MDBoxLayout:
                     md_bg_color: 23/255,28/255,35/255,1
                     pos_hint: {"center_x": 0.5,"center_y": 0.5}
-                    padding:"15dp"
+                    padding:"10dp"
                     orientation: 'vertical'
                     # Label_roboto:
                     #     # id: label_bottom_ori
@@ -112,18 +119,31 @@
                     Image:
                         source: 'mobile-app.png'
                         size: self.texture_size
-                    BoxLayout:
-                        pos_hint: {"center_x": 0.5,"center_y": 1}
-                        padding:"10dp"
-                        size_hint: 0.3,0.1
+            
+            FloatLayout:
+                orientation: "horizontal"
+                size_hint: 1,1
+                #spacing:"30dp"
+                #padding:"5dp"
+                # pos_hint: {"center_x": .5, "center_y": 0.3}       
+                AKSpinnerFoldingCube:
+                    id: foldingcube
+                    spinner_size: dp(35)
+                    pos_hint: {"center_x": .5, "top": .25}
+                    angle: 45
+                    active: True
+                    # BoxLayout:
+                    #     pos_hint: {"center_x": 0.5,"center_y": 1}
+                    #     padding:"10dp"
+                    #     size_hint: 0.3,0.1
 
-                        MDProgressBar:
-                            id: progress
-                            orientation:"horizontal"
-                            value:30
-                            type:"indeterminate"
-                            running_duration:5
-                            catching_duration:1
+                    #     MDProgressBar:
+                    #         id: progress
+                    #         orientation:"horizontal"
+                    #         value:30
+                    #         type:"indeterminate"
+                    #         running_duration:5
+                    #         catching_duration:1
                         
 
 
@@ -254,9 +274,12 @@
                                             font_size:"12sp"
                                             halign:"center"
                                             color:(1,1,1,1)
-                                        Image:
-                                            source: 'mobile-app.png'
-                                            size: self.texture_size
+                                        BoxLayout:
+                                            padding:"10dp"
+                                            Image:
+                                                source: 'mobile-app.png'
+                                                size: self.texture_size
+
                                 Screen:
                                     id:s_mini2
                                     CardLayout:
@@ -286,21 +309,27 @@
                             BoxLayout:
                                 orientation: "horizontal"
                                 size_hint_y:0.5
+                                spacing:"15dp"
+                                padding:"20dp"
 
 
                                     #Button:
                                     #    size_hint:.3,.5
                                     #    text: 'test'
                                     #    on_release: qr.data = "Kivy Rocks!"
-                                QRCodeWidget:
-                                    id: qr
-                                    data: 'Hello World'
-                                    size_hint:0.8,0.8
 
-                                Label_roboto:
-                                    text: 'Motor ID: \nJ1234DS'
-                                    font_size:'12sp'
-                                    valign:'center'
+                                Image:
+                                    source: 'evolion-logo-white.png'
+                                    size: self.texture_size
+                                # QRCodeWidget:
+                                #     id: qr
+                                #     data: 'Hello World'
+                                #     size_hint:0.8,0.8
+
+                                # Label_roboto:
+                                #     text: 'Motor ID: \nJ1234DS'
+                                #     font_size:'12sp'
+                                #     valign:'center'
 
 
 
@@ -328,12 +357,12 @@
                                         BoxLayout:
                                             size_hint:1,1
                                             orientation: "horizontal"
-                                            canvas:
-                                                Color:
-                                                    rgba:(23/255,28/255,35/255,1  )
-                                                RoundedRectangle:
-                                                    size: self.size
-                                                    pos: self.pos
+                                            # canvas:
+                                            #     Color:
+                                            #         rgba:(23/255,28/255,35/255,1  )
+                                            #     RoundedRectangle:
+                                            #         size: self.size
+                                            #         pos: self.pos
 
                                             # BoxLayout:
                                             #     size_hint: 0.2, 1
@@ -369,7 +398,7 @@
                                                     subtick: 3
                                                     # label: 'km/h'
                                                     value:
-                                                    cadran_color: '#171C23'
+                                                    cadran_color: '#0f1217'
                                                     shadow_color: '#92DAF1'
                                                     shadow_width: 20
                                                     #needle_color: '#ff0000'
@@ -388,7 +417,7 @@
                                                     subtick: 5
                                                     # label: 'km/h'
                                                     value:
-                                                    cadran_color: '#171C23'
+                                                    cadran_color: '#0f1217'
                                                     shadow_color: '#92DAF1'
                                                     shadow_width: 50
                                                     #needle_color: '#ff0000'
@@ -422,35 +451,39 @@
                                             BoxLayout:
                                                 orientation: "vertical"
                                                 # pos_hint:{"top":1,"x":.83}
-                                                pos_hint: {"top": .93,"x": 0.001}
-                                                size_hint: .2, .2
+                                                pos_hint: {"top": .93,"x": 0.03}
+                                                size_hint: .18, .12
                                                 padding:"7dp"                            
                                                 Label_roboto:
                                                     id: time
-                                                    font_size:20
+                                                    font_size:"24sp"
                                                     text: '[b]00[/b]:00'
+                                                    color: 146/255,218/255,241/255,1
+                                                    
                                         FloatLayout:
                                             size_hint:1,1
                                             BoxLayout:
                                                 orientation: "vertical"
-                                                pos_hint:{"top":.9,"x":.17}
+                                                pos_hint:{"top":.93,"x":.20}
+                                                # pos_hint:{"top":.15,"x":.47}
                                                 size_hint: .18, .12
-                                                bg_color:
+                                                # bg_color:
                                                 padding:"7dp"
                                                 canvas:
                                                     Color:
-                                                        rgba:(15/255,18/255,23/255,1)
+                                                        rgba:(23/255,28/255,35/255,1)
                                                     RoundedRectangle:
                                                         size: self.size
                                                         pos: self.pos
-                                                Label:
+                                                Label_roboto:
                                                     id:odometer
-                                                    bold: True
+                                                    # bold: True
                                                     text:"000147"
-                                                    font_name:"Roboto"
+                                                    # font_name:"Roboto"
                                                     font_size:"24sp"
                                                     halign:"center"
-                                                    color: 146/255,218/255,241/255,1
+                                                    # color: 146/255,218/255,241/255,1
+                                                    color: 1,1,1,1
                                         FloatLayout:
                                             size_hint:1,1
                                             BoxLayout:
@@ -460,12 +493,13 @@
                                                 padding:"7dp"
                                                 Label:
                                                     id:speed_bar_value
-                                                    bold: True
+                                                    # bold: True
                                                     text:"47"
                                                     font_name:"Roboto"
                                                     font_size:"68sp"
-                                                    halign:"center"
+                                                    halign:"right"
                                                     color: 146/255,218/255,241/255,1
+
                                         FloatLayout:
                                             size_hint:1,1
                                             BoxLayout:
@@ -475,7 +509,7 @@
                                                 padding:"7dp"
                                                 Label:
                                                     id:SOC_bar_value
-                                                    bold: True
+                                                    # bold: True
                                                     text:"47%"
                                                     font_name:"Roboto"
                                                     font_size:"28sp"
@@ -657,11 +691,12 @@
                                         size_hint: 1,1
                                         orientation:"horizontal"
                                         spacing:5
+                                        padding:["10dp","0dp"]
                                         Label:
                                             text:"SOC :"
                                             # font_style: "Head1"
                                             font_name:"Roboto"
-                                            font_size:"20sp"
+                                            font_size:"32sp"
                                             halign:"left"
                                             size_hint:0.3,1
 
@@ -722,90 +757,90 @@
                 size_hint:1,1
                 PilLayout:
                     orientation: "horizontal"
-                    pos_hint:{"top":.835,"x":.07}
-                    Label_roboto:
+                    pos_hint:{"top":.838,"x":.07}
+                    Label_roboto_white:
                         id: mode_label
                         
                         text:"MODE"
                         size_hint:1,1
                         font_size:"12sp"
                         pos_hint: {"center_x":0.27}
-                        color:(0,0,0,1)
+                        # color:(0,0,0,1)
 
             FloatLayout:
                 size_hint:1,1
                 PilLayout:
                     orientation: "horizontal"
-                    pos_hint:{"top":.645,"x":.07}
-                    Label_roboto:
+                    pos_hint:{"top":.648,"x":.07}
+                    Label_roboto_white:
                         id: suhu_label
                         text:"POWER"
                         size_hint:1,1
                         font_size:"12sp"
                         pos_hint: {"center_x":0.27}
-                        color:(0,0,0,1)
+                        # color:(0,0,0,1)
                         
-            FloatLayout:
-                size_hint:1,1
-                PilLayout:
-                    orientation: "horizontal"
-                    pos_hint:{"top":.268,"x":.49}
-                    size_hint: 0.2, 0.04
-                    Label_roboto:
-                        # id: label_bottom_ori
-                        text:"DASHBOARD"
-                        size_hint:1,1
-                        font_size:"12sp"
-                        pos_hint: {"center_x":0.5}
-                        color:(0,0,0,1)
+            # FloatLayout:
+            #     size_hint:1,1
+            #     PilLayout:
+            #         orientation: "horizontal"
+            #         pos_hint:{"top":.268,"x":.49}
+            #         size_hint: 0.2, 0.04
+            #         Label_roboto:
+            #             # id: label_bottom_ori
+            #             text:"DASHBOARD"
+            #             size_hint:1,1
+            #             font_size:"12sp"
+            #             pos_hint: {"center_x":0.5}
+            #             color:(0,0,0,1)
+
+            # FloatLayout:
+            #     size_hint:1,1
+            #     PilLayout:
+            #         orientation: "horizontal"
+            #         # pos_hint:{"top":.058,"x":.36}
+            #         pos_hint:{"top":.058,"x":.27}
+            #         Label_roboto_white:
+            #             # id: label_bottom_ori
+            #             text:"BATTERY"
+            #             size_hint:1,1
+            #             font_size:"12sp"
+            #             pos_hint: {"center_x":0.27}
+            #             # color:(0,0,0,1)
 
             FloatLayout:
                 size_hint:1,1
                 PilLayout:
                     orientation: "horizontal"
-                    # pos_hint:{"top":.058,"x":.36}
-                    pos_hint:{"top":.058,"x":.27}
-                    Label_roboto:
-                        # id: label_bottom_ori
-                        text:"BATTERY"
-                        size_hint:1,1
-                        font_size:"12sp"
-                        pos_hint: {"center_x":0.27}
-                        color:(0,0,0,1)
-
-            FloatLayout:
-                size_hint:1,1
-                PilLayout:
-                    orientation: "horizontal"
-                    pos_hint:{"top":.058,"x":.392}
-                    size_hint_x: 0.17
-                    canvas:
-                        Color:
-                            rgba:(146/255,218/255,241/255,1)
-                        RoundedRectangle:
-                            size: self.size
-                            pos: self.pos
-                    Label_roboto:
+                    pos_hint:{"top":.058,"x":.33}
+                    size_hint_x: 0.165
+                    # canvas:
+                    #     Color:
+                    #         rgba:(146/255,218/255,241/255,1)
+                    #     RoundedRectangle:
+                    #         size: self.size
+                    #         pos: self.pos
+                    Label_roboto_white:
                         id: tegangan_value_text
                         text:"tegangan :"
                         size_hint:1,1
                         font_size:"12sp"
                         halign:"left"
-                        color:(0,0,0,1)
+                        # color:(0,0,0,1)
 
 
-            FloatLayout:
-                size_hint:1,1
-                PilLayout:
-                    orientation: "horizontal"
-                    pos_hint:{"top":.058,"x":.74}
-                    Label_roboto:
-                        # id: label_bottom_ori
-                        text:"VEHICLE"
-                        size_hint:1,1
-                        font_size:"12sp"
-                        pos_hint: {"center_x":0.27}
-                        color:(0,0,0,1)
+            # FloatLayout:
+            #     size_hint:1,1
+            #     PilLayout:
+            #         orientation: "horizontal"
+            #         pos_hint:{"top":.058,"x":.74}
+            #         Label_roboto:
+            #             # id: label_bottom_ori
+            #             text:"VEHICLE"
+            #             size_hint:1,1
+            #             font_size:"12sp"
+            #             pos_hint: {"center_x":0.27}
+            #             color:(0,0,0,1)
 
             FloatLayout:
                 size_hint:1,1
@@ -813,13 +848,13 @@
                     orientation: "horizontal"
                     pos_hint:{"top":.263,"x":.0475}
                     size_hint: 0.15, 0.04
-                    Label_roboto:
+                    Label_roboto_white:
                         id: card_label
                         text:"APLIKASI"
                         size_hint:1,1
                         font_size:"12sp"
                         pos_hint: {"center_x":0.27}
-                        color:(0,0,0,1)
+                        # color:(0,0,0,1)
 
             FloatLayout:
                 orientation: "horizontal"
