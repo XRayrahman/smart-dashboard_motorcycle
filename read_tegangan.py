@@ -1,20 +1,23 @@
 #!/usr/bin/python
+from curses import baudrate
 import os, sys
 import serial
 # import time
 import json
 
+baudrate = 115200
+
 try:
     os.system("sudo chmod 777 /dev/ttyUSB0")
-    ser = serial.Serial('/dev/ttyUSB0',9600, timeout=5)
+    ser = serial.Serial('/dev/ttyUSB0',baudrate, timeout=5)
 except:
     try:
         os.system("sudo chmod 777 /dev/ttyUSB1")
-        ser = serial.Serial('/dev/ttyUSB1',9600, timeout=5)
+        ser = serial.Serial('/dev/ttyUSB1',baudrate, timeout=5)
     except:
         try:
             os.system("sudo chmod 777 /dev/ttyUSB2")
-            ser = serial.Serial('/dev/ttyUSB2', 9600, timeout=5)
+            ser = serial.Serial('/dev/ttyUSB2', baudrate, timeout=5)
         except:
             pass
 
@@ -46,7 +49,7 @@ while True:
         }
 
         if len(str(data)) != 0:
-            file = "database/datastore.json"
+            file = "datastore.json"
             with open(file, 'w') as file_object:  #open the file in write mode
                 json.dump(data_json, file_object, indent=4)
             # print(data_json)

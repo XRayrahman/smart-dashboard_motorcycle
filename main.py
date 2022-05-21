@@ -61,10 +61,10 @@ from kivy.properties import (
 )
 #Clock.max_iteration = 50
 from kivy.base import ExceptionHandler, ExceptionManager
-from kivy.config import Config
-Config.set('graphics', 'width', '800')
-Config.set('graphics', 'height', '480')
-Config.write()
+# from kivy.config import Config
+# Config.set('graphics', 'width', '800')
+# Config.set('graphics', 'height', '480')
+# Config.write()
 #import rfcomm_server
 #from kivy.garden.cefpython import CEFBrowser
 
@@ -89,7 +89,7 @@ class Gesits(MDApp):
         #self.theme_cls.primary_hue = "800" 
         self.theme_cls.primary_palette = "BlueGray"
         self.theme_cls.primary_hue = "500" 
-        self.title="MOLI-NAV"
+        self.title="EVOLION"
 
         
         return MyLayout()
