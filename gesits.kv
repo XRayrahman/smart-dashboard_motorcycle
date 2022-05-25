@@ -388,40 +388,78 @@
                                                 orientation: 'vertical'
                                                 BoxLayout:
                                                     size_hint: 1, 0.4
-                                                SpeedMeter:
-                                                    size_hint:1,1
-                                                    id: SOC_bar
-                                                    max: 100
-                                                    tick: 300
-                                                    start_angle: -180
-                                                    end_angle: 90
-                                                    subtick: 3
-                                                    # label: 'km/h'
-                                                    value:
-                                                    cadran_color: '#0f1217'
-                                                    shadow_color: '#92DAF1'
-                                                    shadow_width: 20
-                                                    #needle_color: '#ff0000'
-                                                    sectors: [0, '#0B0E0D']
-                                                    sector_width: 18
+                                                # SpeedMeter:
+                                                #     size_hint:1,1
+                                                #     id: SOC_bar
+                                                #     max: 100
+                                                #     tick: 300
+                                                #     start_angle: -180
+                                                #     end_angle: 90
+                                                #     subtick: 3
+                                                #     # label: 'km/h'
+                                                #     value:
+                                                #     cadran_color: '#0f1217'
+                                                #     shadow_color: '#92DAF1'
+                                                #     shadow_width: 20
+                                                #     #needle_color: '#ff0000'
+                                                #     sectors: [0, '#0B0E0D']
+                                                #     sector_width: 18
+
+                                                
+                                                CardLayout:
+                                                    orientation: "vertical"
+
+
+                                                    AKCircularProgress:
+                                                        id: SOC_bar
+                                                        circle_color: 146/255,218/255,241/255,1
+                                                        percent_color: 146/255,218/255,241/255,1
+                                                        background_circle_color: 15/255,18/255,23/255,1
+                                                        line_width: dp(8)
+                                                        background_line_width: dp(8)
+                                                        percent_size: "32sp"
+                                                        # current_percent: 25%
+                                                        pos_hint: {"center_x": .5, "center_y": .5}
+                                                        size_hint: 1, 1
+                                                        # size: dp(140), dp(140)
+                                                        percent_type: "percent"
+                                                        start_deg: 240
+                                                        end_deg: 480
+                                                        # percent_type: "relative"
+                                                        max_percent: 100
+
+                                                    BoxLayout:
+                                                        orientation: "vertical"
+                                                        pos_hint:{"center_x":.5}
+                                                        size_hint: .25, .25
+                                                        padding:"7dp"
+                                                        Label:
+                                                            id:SOC_bar_value
+                                                            bold: True
+                                                            text:"SOC"
+                                                            font_name:"Roboto"
+                                                            font_size:"28sp"
+                                                            halign:"center"
+                                                            color: 146/255,218/255,241/255,1
+
                                             BoxLayout:
                                                 size: 0.5,1
                                                 padding: "25dp"
-                                                SpeedMeter:
+                                                NoValueSpeedMeter:
                                                     size_hint:1,1
                                                     id: speed_bar
-                                                    max: 105
+                                                    max: 120
                                                     tick: 10
                                                     start_angle: -90
                                                     end_angle: 180
                                                     subtick: 5
                                                     # label: 'km/h'
-                                                    value:
+                                                    # value: 4
                                                     cadran_color: '#0f1217'
                                                     shadow_color: '#92DAF1'
-                                                    shadow_width: 50
+                                                    shadow_width: 100
                                                     #needle_color: '#ff0000'
-                                                    sectors: [0, '#0B0E0D']
+                                                    sectors: [0, '#171c23']
                                                     sector_width: 22
                                                 # #spacing:"25dp"
                                                 # orientation: "vertical"
@@ -484,11 +522,12 @@
                                                     halign:"center"
                                                     # color: 146/255,218/255,241/255,1
                                                     color: 1,1,1,1
+
                                         FloatLayout:
                                             size_hint:1,1
                                             BoxLayout:
                                                 orientation: "vertical"
-                                                pos_hint:{"top":.43,"x":.45}
+                                                pos_hint:{"top":.43,"x":.438}
                                                 size_hint: .25, .25
                                                 padding:"7dp"
                                                 Label:
@@ -504,17 +543,33 @@
                                             size_hint:1,1
                                             BoxLayout:
                                                 orientation: "vertical"
-                                                pos_hint:{"top":.4,"x":.17}
+                                                pos_hint:{"top":.26,"x":.47}
                                                 size_hint: .25, .25
                                                 padding:"7dp"
                                                 Label:
-                                                    id:SOC_bar_value
-                                                    # bold: True
-                                                    text:"47%"
+                                                    # id:speed_bar_value
+                                                    bold: True
+                                                    text:"KM/H"
                                                     font_name:"Roboto"
-                                                    font_size:"28sp"
-                                                    halign:"center"
+                                                    font_size:"24sp"
+                                                    halign:"right"
                                                     color: 146/255,218/255,241/255,1
+
+                                        # FloatLayout:
+                                        #     size_hint:1,1
+                                        #     BoxLayout:
+                                        #         orientation: "vertical"
+                                        #         pos_hint:{"top":.4,"x":.17}
+                                        #         size_hint: .25, .25
+                                        #         padding:"7dp"
+                                        #         Label:
+                                        #             id:SOC_bar_value
+                                        #             # bold: True
+                                        #             text:"47%"
+                                        #             font_name:"Roboto"
+                                        #             font_size:"28sp"
+                                        #             halign:"center"
+                                        #             color: 146/255,218/255,241/255,1
                                                 
 
 
@@ -666,19 +721,21 @@
                                 orientation:"horizontal"
 
                                 BoxLayout:
-                                    size_hint: 0.4, 1
+                                    size_hint: 0.355, 1
                                     padding:'25sp'
                                     canvas:
                                         Color:
-                                            rgba:(23/255,28/255,35/255,1  )
+                                            rgba:(23/255,28/255,35/255,1)
+                                            # rgba: (11/255,14/255,13/255,1)
                                         RoundedRectangle:
                                             size: self.size
                                             pos: self.pos
-                                    # padding:"25dp"
+                                    padding:"10dp"
                                     # spacing: 10
-                                #     MDIconButton:
-                                #         icon: "battery-medium"
-                                #         user_font_size: "50sp"
+                                    MDIconButton:
+                                        icon: "lightning-bolt"
+                                        user_font_size: "40sp"
+                                        pos_hint:{"center_y": .5}
                                 # #Rotate:
                                 # #    angle: 45
                                 # #    origin: self.center
@@ -692,16 +749,16 @@
                                         orientation:"horizontal"
                                         spacing:5
                                         padding:["10dp","0dp"]
-                                        Label:
-                                            text:"SOC :"
-                                            # font_style: "Head1"
-                                            font_name:"Roboto"
-                                            font_size:"32sp"
-                                            halign:"left"
-                                            size_hint:0.3,1
+                                        # Label:
+                                        #     text:"SOC :"
+                                        #     # font_style: "Head1"
+                                        #     font_name:"Roboto"
+                                        #     font_size:"32sp"
+                                        #     halign:"left"
+                                        #     size_hint:0.3,1
 
                                         Label:
-                                            id: SOC_value
+                                            id: tegangan_value_text
                                             size_hint:0.7,1
                                             text:""
                                             #font_style: "Body2"
@@ -712,11 +769,13 @@
                                 # BoxLayout:
                                 #     size_hint: .1,1
                                 BoxLayout:
-                                    size_hint: 0.45, 1
+                                    size_hint: 0.477, 1
                                     padding:'25sp'
                                     canvas:
                                         Color:
-                                            rgba:(23/255,28/255,35/255,1  )
+                                            rgba:(23/255,28/255,35/255,1)
+
+                                            # rgba: (11/255,14/255,13/255,1)
                                         RoundedRectangle:
                                             size: self.size
                                             pos: self.pos
@@ -733,31 +792,58 @@
                                         size_hint: 1,1
                                         orientation:"horizontal"
                                         spacing:5
-                                        #Label:
-                                        #    text:"Speed :"
-                                        #    font_style: "Body2"
-                                        #    font_name:"Roboto"
+                                        padding: dp(10)
 
-                                        Label:
-                                            text:"SPEED :"
-                                            # font_style: "Head1"
-                                            font_name:"Roboto"
-                                            font_size:"20sp"
-                                            halign:"left"
-                                            size_hint:0.3,1
+                                        # Label:
+                                        #     text:"SPEED :"
+                                        #     # font_style: "Head1"
+                                        #     font_name:"Roboto"
+                                        #     font_size:"20sp"
+                                        #     halign:"left"
+                                        #     size_hint:0.3,1
 
-                                        Label:
-                                            id:speed_value
-                                            size_hint:0.7,1
-                                            text:""
-                                            font_name:"Roboto"
-                                            font_size:"32sp"
-                                            halign:"right"
+                                        # Label:
+                                        #     id:speed_value
+                                        #     size_hint:0.7,1
+                                        #     text:""
+                                        #     font_name:"Roboto"
+                                        #     font_size:"32sp"
+                                        #     halign:"right"
+                                        
+                                        MDIconButton:
+                                            icon: "wifi-off"
+                                            user_font_size: "40sp"
+                                            pos_hint:{"center_y": .5}
+                                            theme_text_color: "Custom"
+                                            text_color: 15/255,18/255,23/255,1
+                                        
+                                        MDIconButton:
+                                            icon: "bluetooth"
+                                            user_font_size: "40sp"
+                                            pos_hint:{"center_y": .5}
+                                            theme_text_color: "Custom"
+                                            text_color: 15/255,18/255,23/255,1
+                                        
+                                        MDIconButton:
+                                            icon: "arrow-left-thick"
+                                            user_font_size: "40sp"
+                                            pos_hint:{"center_y": .5}
+                                            theme_text_color: "Custom"
+                                            text_color: 15/255,18/255,23/255,1
+                                        
+                                        MDIconButton:
+                                            icon: "arrow-right-thick"
+                                            user_font_size: "40sp"
+                                            pos_hint:{"center_y": .5}
+                                            theme_text_color: "Custom"
+                                            text_color: 15/255,18/255,23/255,1
+
+
             FloatLayout:
                 size_hint:1,1
                 PilLayout:
                     orientation: "horizontal"
-                    pos_hint:{"top":.838,"x":.07}
+                    pos_hint:{"top":.838,"x":.069}
                     Label_roboto_white:
                         id: mode_label
                         
@@ -771,10 +857,24 @@
                 size_hint:1,1
                 PilLayout:
                     orientation: "horizontal"
-                    pos_hint:{"top":.648,"x":.07}
+                    pos_hint:{"top":.648,"x":.069}
                     Label_roboto_white:
                         id: suhu_label
                         text:"POWER"
+                        size_hint:1,1
+                        font_size:"12sp"
+                        pos_hint: {"center_x":0.27}
+                        # color:(0,0,0,1)
+
+            FloatLayout:
+                size_hint:1,1
+                PilLayout:
+                    orientation: "horizontal"
+                    pos_hint:{"top":.263,"x":.0472}
+                    size_hint: 0.15, 0.04
+                    Label_roboto_white:
+                        id: card_label
+                        text:"APLIKASI"
                         size_hint:1,1
                         font_size:"12sp"
                         pos_hint: {"center_x":0.27}
@@ -808,25 +908,25 @@
             #             pos_hint: {"center_x":0.27}
             #             # color:(0,0,0,1)
 
-            FloatLayout:
-                size_hint:1,1
-                PilLayout:
-                    orientation: "horizontal"
-                    pos_hint:{"top":.058,"x":.33}
-                    size_hint_x: 0.165
-                    # canvas:
-                    #     Color:
-                    #         rgba:(146/255,218/255,241/255,1)
-                    #     RoundedRectangle:
-                    #         size: self.size
-                    #         pos: self.pos
-                    Label_roboto_white:
-                        id: tegangan_value_text
-                        text:"tegangan :"
-                        size_hint:1,1
-                        font_size:"12sp"
-                        halign:"left"
-                        # color:(0,0,0,1)
+            # FloatLayout:
+            #     size_hint:1,1
+            #     PilLayout:
+            #         orientation: "horizontal"
+            #         pos_hint:{"top":.058,"x":.33}
+            #         size_hint_x: 0.165
+            #         # canvas:
+            #         #     Color:
+            #         #         rgba:(146/255,218/255,241/255,1)
+            #         #     RoundedRectangle:
+            #         #         size: self.size
+            #         #         pos: self.pos
+            #         Label_roboto_white:
+            #             id: tegangan_value_text
+            #             text:"tegangan :"
+            #             size_hint:1,1
+            #             font_size:"12sp"
+            #             halign:"left"
+            #             # color:(0,0,0,1)
 
 
             # FloatLayout:
@@ -843,22 +943,8 @@
             #             color:(0,0,0,1)
 
             FloatLayout:
-                size_hint:1,1
-                PilLayout:
-                    orientation: "horizontal"
-                    pos_hint:{"top":.263,"x":.0475}
-                    size_hint: 0.15, 0.04
-                    Label_roboto_white:
-                        id: card_label
-                        text:"APLIKASI"
-                        size_hint:1,1
-                        font_size:"12sp"
-                        pos_hint: {"center_x":0.27}
-                        # color:(0,0,0,1)
-
-            FloatLayout:
                 orientation: "horizontal"
                 size_hint: 1,1
                 #spacing:"30dp"
                 #padding:"5dp"
-                pos_hint: {"top": .2, "right": 1}
+                pos_hint: {"top": .2, "x": .5}

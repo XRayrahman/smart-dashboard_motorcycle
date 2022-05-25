@@ -1,6 +1,7 @@
 # from logging import root
 from kivymd.app import MDApp
 import os
+# from kivy.animation import Animation
 # os.environ["KIVY_TEXT"] = "pil"
 #from kivy.uix.label import Label
 # from kivy.animation import Animation
@@ -22,8 +23,6 @@ from kivy.uix.screenmanager import RiseInTransition,FadeTransition, ScreenManage
 import requests
 #import smtplib
 # import googlemaps
-# import pandas as pd
-# import numpy as np
 import joblib
 #import cefpython3 as cef
 import requests
@@ -36,7 +35,6 @@ from math import *
 # import urllib
 import subprocess
 from subprocess import Popen, PIPE, STDOUT
-#import asyncio
 from kivy.clock import Clock
 from kivy.graphics import Color, Line, SmoothLine, MatrixInstruction
 from kivy.graphics.context_instructions import Translate, Scale
@@ -65,7 +63,6 @@ from kivy.base import ExceptionHandler, ExceptionManager
 # Config.set('graphics', 'width', '800')
 # Config.set('graphics', 'height', '480')
 # Config.write()
-#import rfcomm_server
 #from kivy.garden.cefpython import CEFBrowser
 
 Window.borderless = True
@@ -97,7 +94,7 @@ class Gesits(MDApp):
     def on_start(self):
 
         self.root.ids.screen_manager.switch_to(self.root.ids.splashScreen)
-        self.subScreen = Clock.schedule_once(self.changeScreen,11)
+        self.subScreen = Clock.schedule_once(self.changeScreen,7)
         
         self.root.ids.switch.active=True
         # self.root.ids.progress.value = 100;
@@ -107,7 +104,7 @@ class Gesits(MDApp):
         speeds = str(speed)
         self.root.ids.speed_bar_value.text = speeds
         speed_value = "%s km/h" %(str(speed))
-        self.root.ids.speed_value.text = speed_value
+        # self.root.ids.speed_value.text = speed_value
         # print(speed_value)
         #baca tegangan
         # with open('file.txt')
@@ -115,12 +112,14 @@ class Gesits(MDApp):
         SOC = 2
         self.SOC = SOC
         self.root.ids.SOC_bar.value = SOC
-        SOC_text = "TEGANGAN : "+str(SOC)+" V"
+        SOC_text = str(SOC)+" V"
+        # SOC_text = "TEGANGAN : "+str(SOC)+" V"
         self.root.ids.tegangan_value_text.text = SOC_text
-        SOC_value = round((SOC/3)*100, 1)
+        SOC_value = round((SOC/3)*100, 0)
         SOC_value = str(SOC_value)+"%"
-        self.root.ids.SOC_value.text = SOC_value
-        self.root.ids.SOC_bar_value.text = SOC_value
+        # self.root.ids.SOC_value.text = SOC_value
+
+        # self.root.ids.SOC_bar_value.text = SOC_value
         # print(SOC_value)
         # print(Clock.max_iteration)
         self.sub1 = Clock.schedule_interval(self.update_time, 5)
@@ -145,7 +144,7 @@ class Gesits(MDApp):
             self.sw_seconds += nap
 
         try :
-            rt = open('datastore.json')
+            rt = open('database/datastore.json')
             data = json.load(rt)
             strtegangan = data['tegangan']
             self.kecepatan = data['kecepatan']
@@ -158,7 +157,8 @@ class Gesits(MDApp):
         # else:
         # self.tegangan = tegangan
         #strtegangan = data_tegangan
-        SOC_text = "TEGANGAN : "+ strtegangan +" V"
+        SOC_text = strtegangan +" V"
+        # SOC_text = "TEGANGAN : "+ strtegangan +" V"
         self.root.ids.tegangan_value_text.text = SOC_text
         valtegangan = float(strtegangan)
         if valtegangan >= 71:
@@ -176,20 +176,23 @@ class Gesits(MDApp):
         #     SOC_value = round(20-((7-valtegangan)/0.1),1)
 
         # SOC_value = round((float(strtegangan)/3)*100, 1)
-        self.root.ids.SOC_bar.value = SOC_value
+        # self.root.ids.SOC_bar.current_percent = 20
+        self.root.ids.SOC_bar.current_percent = SOC_value
         self.SOC_value = str(SOC_value)+"%"
-        self.root.ids.SOC_value.text = self.SOC_value
-        self.root.ids.SOC_bar_value.text = self.SOC_value
+        # self.root.ids.SOC_value.text = self.SOC_value
+        # self.root.ids.SOC_bar_value.text = self.SOC_value
 
         #kecepatan
         kecepatan = (float(self.kecepatan)/6)*188.4*0.036
-        kecepatan = (format(float(kecepatan), ".1f"))
+        kecepatan = (format(float(kecepatan), ".0f"))
         # print(kecepatan)
         self.root.ids.speed_bar.value = kecepatan
         speeds = str(kecepatan)
         self.root.ids.speed_bar_value.text = speeds
         speed_value = "%s km/h" %(speeds)
-        self.root.ids.speed_value.text = speed_value
+        # self.root.ids.speed_value.text = speed_value
+
+        # self.root.ids.progress_relative.current_percent = 20
 
 
     def odometer(self,nap):
@@ -231,7 +234,7 @@ class Gesits(MDApp):
             
         try:
             if len(str(data)) != 0:
-                file = "odometer.json"
+                file = "database/odometer.json"
                 with open(file, 'w') as file_object: 
                     json.dump(odometer, file_object, indent=4)
                 # print(data_json)
@@ -253,7 +256,7 @@ class Gesits(MDApp):
             self.sw_seconds += nap
         #tambah detik = :%S
         #self.root.ids.SOC_value.text = "blok"
-        self.root.ids.time.text = strftime('[b]%H[/b]:%M  |')
+        self.root.ids.time.text = strftime('[b]%H:%M  |[/b]')
         #self.root.ids.recommendation.text = "test1"
 
         #displayAvailableNetworks()
@@ -459,8 +462,8 @@ class MyLayout(Screen):
             data_matrix = json.loads(post_matrix.text)
             duration = data_matrix['durations'][0][1]
             TrueDistance = data_matrix['distances'][0][1]
-            self.ids.DummyDistance.text = str(TrueDistance)
-            self.ids.DummyTimeEst.text = str(duration)
+            self.ids.DummyDistance.text = str(TrueDistance) + " km"
+            self.ids.DummyTimeEst.text = str(duration) + " s"
         except Exception as e:
             print('INVALID REQUEST DISTANCE :',str(e) )
         
@@ -516,10 +519,10 @@ class MyLayout(Screen):
         #     print('INVALID REQUEST DISTANCE :',str(e) )
 
         try:
-            SOC_value = self.ids.SOC_value.text
+            SOC_value = self.ids.SOC_bar.current_percent
             print("SOC : ",SOC_value)
             SOC = SOC_value
-            SOC = SOC_value.replace("%","")
+            # SOC = SOC_value.replace("%","")
             print(float(SOC))
             eco = 45
             normal = 60
@@ -769,6 +772,18 @@ class NavBar(FakeRectangularElevationBehavior, MDFloatLayout):
 
 #     def dismiss_popup(self, dt):
 #         self.dismiss()
+
+class NoValueSpeedMeter(SpeedMeter):
+
+    def value_str(self, n): return ''
+
+_displayed = { 
+    0: '0',
+    30: u'\u03a0 / 6', 60: u'\u03a0/3', 90: u'\u03a0/2', 120: u'2\u03a0/3',
+    150: u'5\u03a0/6',
+    180: u'\u03a0', 210: u'7\u03a0/6', 240: u'4\u03a0/3'
+    }
+    
 def reset():
     import kivy.core.window as window
     from kivy.base import EventLoop
