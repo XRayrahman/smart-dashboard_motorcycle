@@ -38,8 +38,7 @@ try:
             data = data.decode('utf-8')
             if (data[0]=='{') :
                 data=json.loads(data)
-                
-            # if(data['wifiID']) :
+
             try:
                 wifi=data['wifiID']
                 if val1 == wifi:
@@ -68,15 +67,16 @@ try:
 
             # if(data['tujuan']) :
             try:
-                tujuan=data['tujuan']
-                if val3 == tujuan:
+                latitude=data['latitude']
+                longitude=data['longitude']
+                if val3 == latitude:
                     pass
                 else:
-                    print(tujuan)
-                    val3 = tujuan
+                    val3 = latitude
                 #print("tujuan :", tujuan)
             except:
-                tujuan=""
+                latitude=""
+                longitude=""
                 pass
             
             tx = {
@@ -85,12 +85,15 @@ try:
                     "password": pas
                 },
                 "address" : {
-                    "tujuan": tujuan
+                    "tujuan": {
+                        "latitude": latitude,
+                        "longitude": longitude
+                    }
                 }
             }
             if len(data) != 0:
                 file = "con-log.json"
-                with open(file, 'w') as file_object:  #open the file in write mode
+                with open(file, 'w') as file_object: 
                     json.dump(tx, file_object, indent=4, separators=(", ", " : "))
             else:
                 pass

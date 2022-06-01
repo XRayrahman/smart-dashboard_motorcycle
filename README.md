@@ -1,5 +1,14 @@
 # gesits-system
-Tampilan dashboard untuk kendaraan listrik cerdas
+Tampilan dashboard digital untuk kendaraan listrik berbasis python dan kivy
+
+## How to Run
+1. instalasi dependencies/libraries yang diperlukan pada requirement.txt
+2. jalankan program dengan "python main.py"
 
 ## Requirements
-kivy, kivymd dan selain itu terdapat pada requirement.txt
+- Dependencies/libraries pada requirement.txt
+- python ^3.9
+
+
+## Made by
+RAIZEN - Ray Rahman

@@ -1,39 +1,12 @@
-# from logging import root
 from kivymd.app import MDApp
-import os
-# from kivy.animation import Animation
-# os.environ["KIVY_TEXT"] = "pil"
-#from kivy.uix.label import Label
-# from kivy.animation import Animation
-# from kivy.factory import Factory
 from kivy.core.window import Window
-# from kivy.uix.popup import Popup
-# from kivy.uix.label import Label
 from kivy.clock import Clock
 from kivymd.uix.behaviors import FakeRectangularElevationBehavior
-# from kivy.uix.boxlayout import BoxLayout
-# from kivymd.theming import ThemableBehavior
 from kivymd.uix.floatlayout import MDFloatLayout
-# from kivymd.uix.list import OneLineListItem
 from kivymd.uix.dialog import MDDialog
-# from kivy.lang import Builder
-#from kivy.uix.widget import Widget
 from kivy.uix.screenmanager import RiseInTransition,FadeTransition, ScreenManager, Screen
-#from googlemaps import convert
-import requests
-#import smtplib
-# import googlemaps
-import joblib
-#import cefpython3 as cef
-import requests
-import json
-# import http.client
-# from datetime import datetime
 from time import strftime
 from math import *
-# import time
-# import urllib
-import subprocess
 from subprocess import Popen, PIPE, STDOUT
 from kivy.clock import Clock
 from kivy.graphics import Color, Line, SmoothLine, MatrixInstruction
@@ -50,20 +23,18 @@ from kivy_garden.mapview.constants import (
     MIN_LONGITUDE,
 )
 from kivymd_extensions.akivymd import *
-from kivy.properties import (
-    BooleanProperty,
-    ListProperty,
-    NumericProperty,
-    ObjectProperty,
-    StringProperty,
-)
+import os
+import requests
+import joblib
+import requests
+import json
+import subprocess
+
 #Clock.max_iteration = 50
-from kivy.base import ExceptionHandler, ExceptionManager
 # from kivy.config import Config
 # Config.set('graphics', 'width', '800')
 # Config.set('graphics', 'height', '480')
 # Config.write()
-#from kivy.garden.cefpython import CEFBrowser
 
 Window.borderless = True
 #Window.size=(800,480)
@@ -80,10 +51,7 @@ class Gesits(MDApp):
     screen_manager = ScreenManager()
     jarak_tempuh_total = 0
     def build(self):
-        #self.theme_cls.accent_color = "Green"
         self.theme_cls.theme_style = "Dark"
-        #self.theme_cls.primary_palette = "BlueGray"
-        #self.theme_cls.primary_hue = "800" 
         self.theme_cls.primary_palette = "BlueGray"
         self.theme_cls.primary_hue = "500" 
         self.title="EVOLION"
@@ -97,17 +65,7 @@ class Gesits(MDApp):
         self.subScreen = Clock.schedule_once(self.changeScreen,7)
         
         self.root.ids.switch.active=True
-        # self.root.ids.progress.value = 100;
-        speed = 47
         self.jarak_sebelumnya = 0
-        self.root.ids.speed_bar.value = speed
-        speeds = str(speed)
-        self.root.ids.speed_bar_value.text = speeds
-        speed_value = "%s km/h" %(str(speed))
-        # self.root.ids.speed_value.text = speed_value
-        # print(speed_value)
-        #baca tegangan
-        # with open('file.txt')
 
         SOC = 2
         self.SOC = SOC
@@ -117,11 +75,6 @@ class Gesits(MDApp):
         self.root.ids.tegangan_value_text.text = SOC_text
         SOC_value = round((SOC/3)*100, 0)
         SOC_value = str(SOC_value)+"%"
-        # self.root.ids.SOC_value.text = SOC_value
-
-        # self.root.ids.SOC_bar_value.text = SOC_value
-        # print(SOC_value)
-        # print(Clock.max_iteration)
         self.sub1 = Clock.schedule_interval(self.update_time, 5)
         self.sub2 = Clock.schedule_interval(self.update_data, 1)
         self.sub2 = Clock.schedule_interval(self.odometer, 1)
@@ -152,11 +105,6 @@ class Gesits(MDApp):
             strtegangan = "0.00"
             self.kecepatan = "0.00"
            
-        # if data_tegangan == 0.00:
-        #     pass
-        # else:
-        # self.tegangan = tegangan
-        #strtegangan = data_tegangan
         SOC_text = strtegangan +" V"
         # SOC_text = "TEGANGAN : "+ strtegangan +" V"
         self.root.ids.tegangan_value_text.text = SOC_text
@@ -179,8 +127,6 @@ class Gesits(MDApp):
         # self.root.ids.SOC_bar.current_percent = 20
         self.root.ids.SOC_bar.current_percent = SOC_value
         self.SOC_value = str(SOC_value)+"%"
-        # self.root.ids.SOC_value.text = self.SOC_value
-        # self.root.ids.SOC_bar_value.text = self.SOC_value
 
         #kecepatan
         kecepatan = (float(self.kecepatan)/6)*188.4*0.036
@@ -257,20 +203,19 @@ class Gesits(MDApp):
         #tambah detik = :%S
         #self.root.ids.SOC_value.text = "blok"
         self.root.ids.time.text = strftime('[b]%H:%M  |[/b]')
-        #self.root.ids.recommendation.text = "test1"
 
-        #displayAvailableNetworks()
         f = open('con-log.json')
         file = json.load(f)
-        tujuan = file['address']['tujuan']
+        tujuanLat = file['address']['tujuan']['latitude']
+        tujuanLng = file['address']['tujuan']['longitude']
         wifiID = file['connection']['wifiID']
         password = file['connection']['password']
         #print (tujuan)
         if len(wifiID) == 0:
-            if len(tujuan) == 0:
+            if len(tujuanLat) == 0:
                 pass
             else:
-                if self.tuj != tujuan:
+                if self.tuj != tujuanLat:
                     try:
                         #fungsi tujuan
                         try:
@@ -278,7 +223,7 @@ class Gesits(MDApp):
                         except Exception as e:
                             print('marker error :',str(e) )
                         try:
-                            self.root.estimasi(tujuan, self.SOC_value)
+                            self.root.estimasi(tujuanLat,tujuanLng, self.SOC_value)
                         except Exception as e:
                             print('estimation error :',str(e) )
                             
@@ -289,7 +234,7 @@ class Gesits(MDApp):
                         self.root.ids.mode_label.text = "JARAK"
                         self.root.ids.suhu_label.text = "WAKTU"
                         self.root.ids.card_label.text = "REKOMENDASI"
-                        self.tuj = tujuan
+                        self.tuj = tujuanLat
                         print("selesai")
                     except Exception as e:
                         print('function error :',str(e) )
@@ -367,7 +312,7 @@ class MyLayout(Screen):
             print("error center map:", str(e))
 
         try:
-            self.marker_origin = MapMarker(lat=self.OriginLat, lon=self.OriginLng, source="marker-3.png")
+            self.marker_origin = MapMarker(lat=self.OriginLat, lon=self.OriginLng, source="marker-3-24.png")
             self.marker_destination = MapMarker(lat=self.lat, lon=self.lng, source="marker-red.png")
             mapview.add_widget(self.marker_origin)
             mapview.add_widget(self.marker_destination)
@@ -406,7 +351,7 @@ class MyLayout(Screen):
     def move_s_mini1(self):
         self.ids.screendget_mini.switch_to(self.ids.s_mini1)
 
-    def estimasi(self, userinput, SOC_value):
+    def estimasi(self, destinationLat, destinationLng, SOC_value):
         # lay = MyLayout()
         #path_to_kv_file = "test.kv"
         this_path = str(os.getcwd())
@@ -425,7 +370,7 @@ class MyLayout(Screen):
         # self.OriginLng = 112.793715
         #destinationinput = urllib.parse.quote(userinput)
         #print(destinationinput)
-        placeid_destination = userinput
+        # placeid_destination = userinput
         
         # try:
         #     placeID_Destination_URL = "https://maps.googleapis.com/maps/api/place/details/json?place_id="+placeid_destination+"&key=AIzaSyBxidFA-DVnYjtl9DSNnaVJ3EaOHdY7i50&fields=geometry"
@@ -446,10 +391,12 @@ class MyLayout(Screen):
         # except Exception as e:
         #     print('INVALID REQUEST DESTINATION',str(e))
 
+        self.lat = destinationLat
+        self.lng = destinationLng
         self.OriginLat = -7.2849060923904085
         self.OriginLng = 112.7961434972626
-        self.lat = -7.277094626336178
-        self.lng = 112.7974416864169
+        # self.lat = -7.277094626336178
+        # self.lng = 112.7974416864169
         body = {"locations":[[self.OriginLng,self.OriginLat],[self.lng,self.lat]],"metrics":["distance","duration"],"units":"km"}
         headers = {
             'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',

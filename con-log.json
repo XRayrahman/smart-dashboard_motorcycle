@@ -4,6 +4,9 @@
         "password" : ""
     }, 
     "address" : {
-        "tujuan" : ""
+        "tujuan" : {
+            "latitude" : "",
+            "longitude" : ""
+        }
     }
 }
