@@ -1,15 +1,12 @@
 from kivymd.app import MDApp
 from kivy.core.window import Window
-from kivy.clock import Clock
-from kivymd.uix.behaviors import FakeRectangularElevationBehavior
-from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.dialog import MDDialog
 from kivy.uix.screenmanager import RiseInTransition,FadeTransition, ScreenManager, Screen
 from time import strftime
 from math import *
 from subprocess import Popen, PIPE, STDOUT
 from kivy.clock import Clock
-from kivy.graphics import Color, Line, SmoothLine, MatrixInstruction
+from kivy.graphics import Color, Line, SmoothLine
 from kivy.graphics.context_instructions import Translate, Scale
 from kivy_garden.speedmeter import SpeedMeter
 from kivy_garden.qrcode import QRCodeWidget
@@ -28,7 +25,6 @@ import requests
 import joblib
 import requests
 import json
-import subprocess
 
 #Clock.max_iteration = 50
 # from kivy.config import Config
@@ -41,7 +37,7 @@ Window.borderless = True
 #Window.fullscreen = True
 Window.maximize()
 
-class Gesits(MDApp):
+class Dashboard(MDApp):
     sw_started= False
     sw_seconds = 0
     val = ""
@@ -62,7 +58,7 @@ class Gesits(MDApp):
     def on_start(self):
 
         self.root.ids.screen_manager.switch_to(self.root.ids.splashScreen)
-        self.subScreen = Clock.schedule_once(self.changeScreen,7)
+        self.subScreen = Clock.schedule_once(self.changeScreen,9)
         
         self.root.ids.switch.active=True
         self.jarak_sebelumnya = 0
@@ -75,15 +71,17 @@ class Gesits(MDApp):
         self.root.ids.tegangan_value_text.text = SOC_text
         SOC_value = round((SOC/3)*100, 0)
         SOC_value = str(SOC_value)+"%"
-        self.sub1 = Clock.schedule_interval(self.update_time, 5)
-        self.sub2 = Clock.schedule_interval(self.update_data, 1)
-        self.sub2 = Clock.schedule_interval(self.odometer, 1)
-        self.sub3 = Clock.schedule_interval(self.odometer_submit, 5)
-        self.asyncRun = Clock.schedule_once(self.asyncProgram,10)
+
+        self.sub1 = Clock.schedule_interval(self.update_status,     5) #(program, interval/waktu dijalankan)
+        self.sub2 = Clock.schedule_interval(self.update_data,       1)
+        self.sub3 = Clock.schedule_interval(self.odometer,          1)
+        self.sub4 = Clock.schedule_interval(self.odometer_submit,   5)
+        self.asyncRun = Clock.schedule_once(self.asyncProgram,      10)
+
 
     def asyncProgram(self,dt):
-        Popen("python read_tegangan.py", shell=True);
-        Popen("python rfcomm_server.py", shell=True);
+        Popen("python data_communication.py", shell=True);
+        # Popen("python rfcomm_server.py", shell=True);
 
     def changeScreen(self,dt):
         self.root.ids.screen_manager.transition = RiseInTransition()
@@ -96,15 +94,13 @@ class Gesits(MDApp):
         if self.sw_started:
             self.sw_seconds += nap
 
-        try :
-            rt = open('database/datastore.json')
-            data = json.load(rt)
-            strtegangan = data['tegangan']
-            self.kecepatan = data['kecepatan']
+        try:
+            dt = open('database/tegangan.json')
+            data_tegangan = json.load(dt)
+            strtegangan = data_tegangan['tegangan']
         except:
             strtegangan = "0.00"
-            self.kecepatan = "0.00"
-           
+
         SOC_text = strtegangan +" V"
         # SOC_text = "TEGANGAN : "+ strtegangan +" V"
         self.root.ids.tegangan_value_text.text = SOC_text
@@ -129,8 +125,20 @@ class Gesits(MDApp):
         self.SOC_value = str(SOC_value)+"%"
 
         #kecepatan
+        try:    
+            dk = open('database/kecepatan.json')
+            data_kecepatan = json.load(dk)
+            self.kecepatan = data_kecepatan['kecepatan']
+        except:
+            self.kecepatan = "0.00"
+
         kecepatan = (float(self.kecepatan)/6)*188.4*0.036
         kecepatan = (format(float(kecepatan), ".0f"))
+
+        #maksimal kecepatan
+        if int(kecepatan) >= 121:
+            kecepatan = 120
+
         # print(kecepatan)
         self.root.ids.speed_bar.value = kecepatan
         speeds = str(kecepatan)
@@ -197,49 +205,21 @@ class Gesits(MDApp):
 
         
 
-    def update_time(self, nap):
+    def update_status(self, nap):
         if self.sw_started:
             self.sw_seconds += nap
         #tambah detik = :%S
         #self.root.ids.SOC_value.text = "blok"
         self.root.ids.time.text = strftime('[b]%H:%M  |[/b]')
 
-        f = open('con-log.json')
-        file = json.load(f)
-        tujuanLat = file['address']['tujuan']['latitude']
-        tujuanLng = file['address']['tujuan']['longitude']
-        wifiID = file['connection']['wifiID']
-        password = file['connection']['password']
+        fd = open('database/connection.json')
+        connectionFile = json.load(fd)
+        wifiID = connectionFile['wifi']['id']
+        password = connectionFile['wifi']['pass']
         #print (tujuan)
+
         if len(wifiID) == 0:
-            if len(tujuanLat) == 0:
-                pass
-            else:
-                if self.tuj != tujuanLat:
-                    try:
-                        #fungsi tujuan
-                        try:
-                            self.root.ids.mapview.remove_widget(self.root.marker)
-                        except Exception as e:
-                            print('marker error :',str(e) )
-                        try:
-                            self.root.estimasi(tujuanLat,tujuanLng, self.SOC_value)
-                        except Exception as e:
-                            print('estimation error :',str(e) )
-                            
-                        self.root.center_maps()
-                        self.root.ids.screendget_mini.switch_to(self.root.ids.s_mini2)
-                        self.root.ids.screendget.switch_to(self.root.ids.test2)
-                        self.root.ids.menubar_left.switch_to(self.root.ids.menubar_leftTop2)
-                        self.root.ids.mode_label.text = "JARAK"
-                        self.root.ids.suhu_label.text = "WAKTU"
-                        self.root.ids.card_label.text = "REKOMENDASI"
-                        self.tuj = tujuanLat
-                        print("selesai")
-                    except Exception as e:
-                        print('function error :',str(e) )
-                else:
-                    pass
+            pass
         else:
             if len(password) == 0:
                 pass
@@ -255,38 +235,56 @@ class Gesits(MDApp):
                         pass
                 else:
                     pass
-                    #else:
-                    #    print ("koneksi sukses")
+
+        fe = open('database/estimation.json')
+        estimationFile = json.load(fe)
+        tujuanLat = estimationFile['address']['tujuan']['latitude']
+        tujuanLng = estimationFile['address']['tujuan']['longitude']
+
+
+        if len(tujuanLat) == 0:
+            pass
+        else:
+            if self.tuj != tujuanLat:
+                try:
+                    #fungsi tujuan
+                    try:
+                        self.root.ids.mapview.remove_widget(self.root.marker)
+                    except:
+                        pass
+
+                    try:
+                        self.root.estimasi(tujuanLat,tujuanLng, self.SOC_value)
+                    except Exception as e:
+                        print('estimation error :',str(e) )
+                        
+                    self.root.center_maps()
+                    self.root.ids.screendget_mini.switch_to(self.root.ids.s_mini2)
+                    self.root.ids.screendget.switch_to(self.root.ids.test2)
+                    self.root.ids.menubar_left.switch_to(self.root.ids.menubar_leftTop2)
+                    self.root.ids.mode_label.text = "JARAK"
+                    self.root.ids.suhu_label.text = "WAKTU"
+                    self.root.ids.card_label.text = "REKOMENDASI"
+                    self.tuj = tujuanLat
+                    print("selesai")
+                except Exception as e:
+                    print('function error :',str(e) )
+            else:
+                pass
     
 
 
 class MyLayout(Screen):
 
-    #def Popup_open():
-        
-
-    def comm_con(self,*args):
-        try:
-            self.ids.screendget_mini.switch_to(self.ids.s_mini2)
-            self.ids.recommendation.text = "test1"
-        except Exception as e:
-            print("error :", str(e))
-
     def __init__(self, *args, **kwargs):
         super(MyLayout,self).__init__(*args,**kwargs)
-        #try:
-            #Clock.schedule_once(self.comm_con)
-        #Clock.schedule_interval(self.comm_con, 7)
-        #except Exception as e:
-        #   print("error :", str(e))
-        #Clock.schedule_interval(self.comm_con,15)
 
-
-    def move_s_mini2(self):
-        try:
-            self.ids.screendget_mini.switch_to(self.ids.s_mini2)
-        except Exception as e:
-            print("error :", str(e))
+        this_path = str(os.getcwd())
+        path = this_path+"/.key/api-key.txt"
+        API_file = open(path,"r")
+        print(API_file)
+        self.API_key = API_file.read()
+        API_file.close()
 
     def move_menubar_left2(self):
         
@@ -316,7 +314,7 @@ class MyLayout(Screen):
             self.marker_destination = MapMarker(lat=self.lat, lon=self.lng, source="marker-red.png")
             mapview.add_widget(self.marker_origin)
             mapview.add_widget(self.marker_destination)
-            Clock.schedule_once(self.zoom_maps, 10)
+            Clock.schedule_once(self.zoom_maps, 12)
             #mapview.add_marker(lat=lat, lon=lng)
         except Exception as e:
             print("error marker map:", str(e))
@@ -332,64 +330,56 @@ class MyLayout(Screen):
         self.ids.screendget.switch_to(self.ids.test3, direction='left')
     
     def connect(self, name, password):
-        self.commandl = "nmcli dev wifi connect "+name+" password "+password+""
+        try:
+            self.commandl = "nmcli dev wifi connect "+name+" password "+password
         # print ("success connection : ",sub.out)
-        self.sub(self.commandl)
+        # print (self.command1)
+            scan = os.popen("nmcli device wifi rescan")
+            isConnect = os.popen(self.commandl).read()
+            # isConnect = True
+        except:
+            isConnect = "";
+        
+        if isConnect != "":
+            self.popup = MDDialog(title='terhubung dengan internet \n wifi id : '+name,
+                        radius=[7, 7, 7, 7],
+                        md_bg_color=(25/255,135/255,84/255,1),
+                        size_hint=(None, None), size=(400, 400))
+            self.popup.open()
+        else:
+            self.popup = MDDialog(title='tidak dapat terhubung dengan internet',
+                        radius=[7, 7, 7, 7],
+                        md_bg_color=(244/255,67/255,54/255,1),
+                        size_hint=(None, None), size=(400, 400))
+            self.popup.open()
+        # self.sub(self.commandl)
     
     # function to display avavilabe Wifi networks   
-    def displayAvailableNetworks(self):
-        self.commandl = "nmcli dev wifi"
-        self.sub(self.commandl)
+    # def displayAvailableNetworks(self):
+    #     self.commandl = "nmcli dev wifi"
+    #     self.sub(self.commandl)
 
 
-    def sub(self,command):
-        self.proc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
-        (out, err) = self.proc.communicate()
-        print ("program output : ", out)
-        print ("error : ",err)
+    # def sub(self,command):
+    #     self.proc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
+    #     (out, err) = self.proc.communicate()
+    #     print ("program output : ", out)
+    #     print ("error : ",err)
     
     def move_s_mini1(self):
         self.ids.screendget_mini.switch_to(self.ids.s_mini1)
 
+
+    def move_s_mini2(self):
+        self.ids.screendget_mini.switch_to(self.ids.s_mini2)
+
     def estimasi(self, destinationLat, destinationLng, SOC_value):
         # lay = MyLayout()
         #path_to_kv_file = "test.kv"
-        this_path = str(os.getcwd())
-        path = this_path+"/.key/api-key.txt"
-        API_file = open(path,"r")
-        print(API_file)
-        API_key = API_file.read()
-        API_file.close()
         #gmaps = googlemaps.Client(key=API_key)
         
         scaler = joblib.load('std_rev1.bin')
         model = joblib.load('estimasi_rev1.pkl')
-
-        # self.origin = (-7.289980, 112.793715) 
-        # self.OriginLat = -7.289980
-        # self.OriginLng = 112.793715
-        #destinationinput = urllib.parse.quote(userinput)
-        #print(destinationinput)
-        # placeid_destination = userinput
-        
-        # try:
-        #     placeID_Destination_URL = "https://maps.googleapis.com/maps/api/place/details/json?place_id="+placeid_destination+"&key=AIzaSyBxidFA-DVnYjtl9DSNnaVJ3EaOHdY7i50&fields=geometry"
-        # except Exception as e:
-        #     print('INVALID URL',str(e))
-        # payload={}
-        # headers = {}
-        # try:
-        #     response = requests.request("GET", placeID_Destination_URL, headers=headers, data=payload)
-        #     #print(DestinationJSON)
-        #     print(response.text)
-        #     responseJSON = json.loads(response.text)
-        #     self.geolat_destination = responseJSON['result']['geometry']['location']['lat']
-        #     self.geolng_destination = responseJSON['result']['geometry']['location']['lng']
-        #     self.str_geolat_destination = str(self.geolat_destination)
-        #     self.str_geolng_destination = str(self.geolng_destination)
-        #     print(placeid_destination)
-        # except Exception as e:
-        #     print('INVALID REQUEST DESTINATION',str(e))
 
         self.lat = destinationLat
         self.lng = destinationLng
@@ -400,7 +390,7 @@ class MyLayout(Screen):
         body = {"locations":[[self.OriginLng,self.OriginLat],[self.lng,self.lat]],"metrics":["distance","duration"],"units":"km"}
         headers = {
             'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
-            'Authorization': '5b3ce3597851110001cf6248fee30172e1284561af50061b93def79c',
+            'Authorization': self.API_key,
             'Content-Type': 'application/json; charset=utf-8'
         }
         post_matrix = requests.post('https://api.openrouteservice.org/v2/matrix/driving-car', json=body, headers=headers)
@@ -417,8 +407,8 @@ class MyLayout(Screen):
         headers = {
             'Accept': 'application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8',
         }
-        get_geocode_origin = requests.get('https://api.openrouteservice.org/geocode/reverse?api_key=5b3ce3597851110001cf6248fee30172e1284561af50061b93def79c&point.lon='+str(self.OriginLng)+'&point.lat='+str(self.OriginLat)+'&size=2', headers=headers)
-        get_geocode_destination = requests.get('https://api.openrouteservice.org/geocode/reverse?api_key=5b3ce3597851110001cf6248fee30172e1284561af50061b93def79c&point.lon='+str(self.lng)+'&point.lat='+str(self.lat)+'&size=2', headers=headers)
+        get_geocode_origin = requests.get('https://api.openrouteservice.org/geocode/reverse?api_key='+self.API_key+'&point.lon='+str(self.OriginLng)+'&point.lat='+str(self.OriginLat)+'&size=2', headers=headers)
+        get_geocode_destination = requests.get('https://api.openrouteservice.org/geocode/reverse?api_key='+self.API_key+'&point.lon='+str(self.lng)+'&point.lat='+str(self.lat)+'&size=2', headers=headers)
 
         try:
             geocode_origin = json.loads(get_geocode_origin.text)
@@ -430,40 +420,6 @@ class MyLayout(Screen):
             print(place_name_destination)
         except Exception as e:
             print('INVALID REQUEST DISTANCE :',str(e) )
-
-        # Distancematrix_URL = "https://maps.googleapis.com/maps/api/distancematrix/json?mode=driving&key="+API_key+"&destinations=place_id:"+placeid_destination+"&origins=sukolilo"
-        # #-- Parameter Tambahan --
-        # #&units=metric&traffic_model=pessimistic
-        # #------------------------
-        # payload={}
-        # headers = {}
-        # distanceresp = requests.request("GET", Distancematrix_URL, headers=headers, data=payload)
-        # #distanceresp = gmaps.distance_matrix(origin, placeid_destination, mode='driving') ["rows"][0]["elements"][0]["distance"]["value"]
-        # #print(DestinationJSON)
-        # print(distanceresp.text)
-        # try:
-        #     distanceJSON = json.loads(distanceresp.text)
-        #     Tdistance = distanceJSON['rows'][0]['elements'][0]['distance']['value']
-        #     Ddistance = distanceJSON['rows'][0]['elements'][0]['distance']['text']
-        #     DtimeEst = distanceJSON['rows'][0]['elements'][0]['duration']['text']
-        #     self.ids.DummyDistance.text = Ddistance
-        #     self.ids.DummyTimeEst.text = DtimeEst
-        #     Tdestination = distanceJSON['destination_addresses'][0]
-        #     Tdestination = Tdestination.split(",")
-        #     Tdestination = Tdestination[0:1]
-        #     Tdestination = ','.join(Tdestination)
-        #     Torigin = distanceJSON['origin_addresses'][0]
-        #     Torigin = Torigin.split(",")
-        #     Torigin = Torigin[0:2]
-        #     Torigin = ','.join(Torigin)
-        #     self.ids.lokasi_label.text = "ASAL        :  %s\nTUJUAN   :  %s" %(Torigin,Tdestination)
-        #     # self.ids.label_bottom_ori.text = Torigin
-        #     # self.ids.right_icon.icon = "arrow-right"
-        #     #arrow-right-thin-circle-outline
-        #     TrueDistance = Tdistance/1000
-        #     print(TrueDistance)
-        # except Exception as e:
-        #     print('INVALID REQUEST DISTANCE :',str(e) )
 
         try:
             SOC_value = self.ids.SOC_bar.current_percent
@@ -488,11 +444,11 @@ class MyLayout(Screen):
                 print("estimasi pemakaian energi : ",float(x),float(test))
                 if (float(SOC) - (3/100)*5 <= float(test)):
                     if x == eco:
-                        estimasi_eco = "TIDAK\nCUKUP"
+                        estimasi_eco = "TIDAK CUKUP"
                     elif x == normal:
-                        estimasi_normal = "TIDAK\nCUKUP"
+                        estimasi_normal = "TIDAK CUKUP"
                     elif x == sport:
-                        estimasi_sport = "TIDAK\nCUKUP"
+                        estimasi_sport = "TIDAK CUKUP"
 
                 elif (float(SOC) - (3/100)*5 > float(test)):
                     if x == eco:
@@ -503,21 +459,23 @@ class MyLayout(Screen):
                         estimasi_sport = "CUKUP"
             # satu rekomendasi
             self.ids.recommendation.text = str(estimasi_normal)
+            self.popup = MDDialog(title='Estimasi berhasil',
+                        text= 'ECO : '+estimasi_eco+'\nNORMAL :'+estimasi_normal+'\nSPORT :'+estimasi_sport,
+                        radius=[7, 7, 7, 7],
+                        md_bg_color=(25/255,135/255,84/255,1),
+                        size_hint=(None, None), size=(400, 400))
+            self.popup.open()
         except Exception as e:
             print('estimation error ni :',str(e) )
-
-        # tiga rekomendasi
-        # self.ids.recommendation.text = "ECO          :  %s\n\nNORMAL  :  %s\n\nSPORT     :  %s" %(estimasi_eco, estimasi_normal, estimasi_sport)
-
-
-        try:
-            self.popup = MDDialog(title='Tersambung',
+            self.popup = MDDialogMap(title='Estimasi gagal',
+                        text= 'pastikan kendaraan terkoneksi dengan internet',
                         radius=[7, 7, 7, 7],
                         md_bg_color=(244/255,67/255,54/255,1),
                         size_hint=(None, None), size=(400, 400))
             self.popup.open()
-        except Exception as e:
-            print('recommendation error :',str(e) )
+
+        # tiga rekomendasi
+        # self.ids.recommendation.text = "ECO          :  %s\n\nNORMAL  :  %s\n\nSPORT     :  %s" %(estimasi_eco, estimasi_normal, estimasi_sport)
 
 
 
@@ -530,27 +488,38 @@ class MDDialog(MDDialog):
 
     def dismiss_popup(self, *args):
         self.dismiss()
-        
+
+class MDDialogMap(MDDialog):
+    
+    def __init__(self, **kwargs):
+        super(MDDialog, self).__init__(**kwargs)
+        # call dismiss_popup in 2 seconds
+        Clock.schedule_once(self.dismiss_popup, 12)
+
+    def dismiss_popup(self, *args):
+        self.dismiss() 
     
  
 
 class LineMapLayer(MapLayer):
     def __init__(self,lat,lng,OriginLat,OriginLng, **kwargs):
         super(LineMapLayer, self).__init__(**kwargs)
+
+        this_path = str(os.getcwd())
+        path = this_path+"/.key/api-key.txt"
+        API_file = open(path,"r")
+        print(API_file)
+        self.API_key_map = API_file.read()
+        API_file.close()
         #self.zoom = 16
 
-        url = "https://api.openrouteservice.org/v2/directions/driving-car?&api_key=5b3ce3597851110001cf6248fee30172e1284561af50061b93def79c"
+        url = "https://api.openrouteservice.org/v2/directions/driving-car?&api_key="+self.API_key_map
 
         #testing Dummies
         #-7.289612, 112.796190
-        # start = "&start=8.287872,49.420318" 
+
         start = "&start="+str(OriginLng)+","+str(OriginLat)
         end = "&end="+str(lng)+","+str(lat)
-        # end = "&end=8.687872,49.420318"
-
-        #Real World Appliaction
-        # start = "&start=" + str(startLat) + "," + str(startLng)
-        # end = "&end=" + str(endLat) + "," + str(endLng)
 
         final = url + start + end
         payload={}
@@ -570,7 +539,7 @@ class LineMapLayer(MapLayer):
             self._coordinates.append(self.points)
         self._line_points = None
         self._line_points_offset = (0, 0)
-        self.zoom = 10
+        self.zoom = 9
     
         
         # geo_dover   = [51.126251, 1.327067]
@@ -696,30 +665,6 @@ class LineMapLayer(MapLayer):
             Line(points=self.line_points, width=4 / 2)
             
 
-       
-class NavBar(FakeRectangularElevationBehavior, MDFloatLayout):
-    
-    pass
-
-# class MyHandler(ExceptionHandler):
-#     def handle_exception(self, inst):
-#         if isinstance(inst, ValueError):
-#             Logger.exception('ValueError caught by MyHandler')
-#             return ExceptionManager.PASS
-#         return ExceptionManager.RAISE
-
-# ExceptionManager.add_handler(MyHandler())
-
-# class Progress(Popup):
-    
-#     def __init__(self, **kwargs):
-#         super(Progress, self).__init__(**kwargs)
-#         # call dismiss_popup in 2 seconds
-#         Clock.schedule_once(self.dismiss_popup, 2)
-
-#     def dismiss_popup(self, dt):
-#         self.dismiss()
-
 class NoValueSpeedMeter(SpeedMeter):
 
     def value_str(self, n): return ''
@@ -744,9 +689,8 @@ def reset():
 #MyLayout.estimasi.has_been_called = False
 # lay = MyLayout()
 reset()
-Gesits().run()
-os.system("killall python")
-os.system("exit")
+Dashboard().run()
+os.system("sudo killall python")
 
 ##ifi = Popen("python3 testing.py", shell=True);
 #stdout = blu.communicate()
