@@ -60,8 +60,9 @@ class Dashboard(MDApp):
         self.root.ids.screen_manager.switch_to(self.root.ids.splashScreen)
         self.subScreen = Clock.schedule_once(self.changeScreen,9)
         
-        self.root.ids.switch.active=True
+        self.root.ids.power_switch.active=True
         self.jarak_sebelumnya = 0
+        signal = False
 
         SOC = 2
         self.SOC = SOC
@@ -76,6 +77,7 @@ class Dashboard(MDApp):
         self.sub2 = Clock.schedule_interval(self.update_data,       1)
         self.sub3 = Clock.schedule_interval(self.odometer,          1)
         self.sub4 = Clock.schedule_interval(self.odometer_submit,   5)
+        self.sub5 = Clock.schedule_interval(self.turn_signal,       2)
         self.asyncRun = Clock.schedule_once(self.asyncProgram,      10)
 
 
@@ -202,6 +204,27 @@ class Dashboard(MDApp):
         
         # try:
         
+    def turn_signal(self, nap):
+        if self.sw_started:
+            self.sw_seconds += nap
+
+        fv = open("database/vehicle_info.json")
+        vehicleStatus = json.load(fv)
+        isTurnLeft = vehicleStatus["turn_signal"][0]
+        isTurnRight = vehicleStatus["turn_signal"][1]
+
+        if isTurnLeft == True:
+            self.root.ids.turn_left.text_color = 255/255,255/255,255/255,1
+            Clock.schedule_once(self.blink_signal, 1)
+        elif isTurnRight == True:
+            self.root.ids.turn_right.text_color = 255/255,255/255,255/255,1
+            Clock.schedule_once(self.blink_signal, 1)
+        else:
+            self.root.ids.turn_left.text_color = 15/255,18/255,23/255,1
+
+    def blink_signal(self, *args):
+        self.root.ids.turn_left.text_color = 15/255,18/255,23/255,1
+        self.root.ids.turn_right.text_color = 15/255,18/255,23/255,1
 
         
 
@@ -212,19 +235,25 @@ class Dashboard(MDApp):
         #self.root.ids.SOC_value.text = "blok"
         self.root.ids.time.text = strftime('[b]%H:%M  |[/b]')
 
+        if (self.root.ids.power_switch.active == False):
+            os.system("killall python")
+
+
         fd = open('database/connection.json')
         connectionFile = json.load(fd)
         wifiID = connectionFile['wifi']['id']
         password = connectionFile['wifi']['pass']
+        restartConnect = connectionFile['restart'] 
         #print (tujuan)
 
         if len(wifiID) == 0:
-            pass
+            self.root.ids.bluetooth_status.text_color = 15/255,18/255,23/255,1
         else:
             if len(password) == 0:
                 pass
             else:
                 #code disini
+                self.root.ids.bluetooth_status.text_color = 255/255,255/255,255/255,1
                 if self.val != wifiID:
                     try:
                         self.root.connect(wifiID, password)
@@ -233,9 +262,12 @@ class Dashboard(MDApp):
                     except:
                         print("gagal untuk menyambungkan")
                         pass
+                elif restartConnect == True:
+                    Clock.schedule_once(self.root.connect(wifiID, password), 1)
+
                 else:
                     pass
-
+        
         fe = open('database/estimation.json')
         estimationFile = json.load(fe)
         tujuanLat = estimationFile['address']['tujuan']['latitude']
@@ -326,15 +358,15 @@ class MyLayout(Screen):
     def move_speed(self):
         self.ids.screendget.switch_to(self.ids.test1)
 
-    def move_graph(self):
-        self.ids.screendget.switch_to(self.ids.test3, direction='left')
+    # def move_graph(self):
+    #     self.ids.screendget.switch_to(self.ids.test3, direction='left')
     
     def connect(self, name, password):
         try:
             self.commandl = "nmcli dev wifi connect "+name+" password "+password
         # print ("success connection : ",sub.out)
         # print (self.command1)
-            scan = os.popen("nmcli device wifi rescan")
+            scan = os.popen("nmcli device wifi list --rescan yes").read()
             isConnect = os.popen(self.commandl).read()
             # isConnect = True
         except:
@@ -345,9 +377,12 @@ class MyLayout(Screen):
                         radius=[7, 7, 7, 7],
                         md_bg_color=(25/255,135/255,84/255,1),
                         size_hint=(None, None), size=(400, 400))
+            self.root.ids.wifi_status.icon = "wifi-on"
+            self.root.ids.wifi_status.text_color = 255/255,255/255,255/255,1
             self.popup.open()
         else:
             self.popup = MDDialog(title='tidak dapat terhubung dengan internet',
+                        text="kirim wifi id dan password kembali",
                         radius=[7, 7, 7, 7],
                         md_bg_color=(244/255,67/255,54/255,1),
                         size_hint=(None, None), size=(400, 400))

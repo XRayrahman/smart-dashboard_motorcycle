@@ -30,6 +30,10 @@ def arduino_ports(preferred_list=['*']):
     return ret
     
 # listen for the input, exit if nothing received in timeout period
+def store_data_json(file, json_structure):
+    with open(file, 'w') as file_object:  
+        json.dump(json_structure, file_object, indent=4)
+
 def store_data_arduino(ser):
     while True:
         try:
@@ -51,9 +55,8 @@ def store_data_arduino(ser):
                         "tegangan": tegangan
                     }
 
-                    file = "database/tegangan.json"
-                    with open(file, 'w') as file_object:  
-                        json.dump(data_json_tegangan, file_object, indent=4)
+                    path_tegangan = "database/tegangan.json"
+                    store_data_json(path_tegangan, data_json_tegangan)
                     # tegangan_sebelumnya = tegangan
                 except Exception as e:
                     print('tegangan error :',str(e) )
@@ -66,13 +69,31 @@ def store_data_arduino(ser):
                         "kecepatan": kecepatan
                     }
                         
-                    file = "database/kecepatan.json"
-                    with open(file, 'w') as file_object:  
-                        json.dump(data_json_kecepatan, file_object, indent=4)
+                    path_kecepatan = "database/kecepatan.json"
+                    store_data_json(path_kecepatan, data_json_kecepatan)
                     # kecepatan_sebelumnya = kecepatan
                 except Exception as e:
                     # kecepatan = "0.00"
                     print("kecepatan error : "+str(e))
+
+                try:
+                    turn_left= data['turn'][0]
+                    turn_right= data['turn'][1]
+
+                    data_json_turn = {
+                        "turn_signal":{
+                            "right":turn_left,
+                            "left":turn_right
+                        }
+                    }
+                        
+                    path_turn = "database/vehicle_info.json"
+                    store_data_json(path_turn, data_json_turn)
+                except:
+                    turn_left=False;
+                    turn_right=False;
+
+                
 
                 try:
                     statusEstimation = data['isRun']
@@ -81,28 +102,28 @@ def store_data_arduino(ser):
                         ### koneksi
                         try:
                             bluetooth_wifi_id=data['wifi_id']
+                            bluetooth_wifi_pass=data['wifi_pass']
+                            restart_wifi=data['restart']
                             # isConnected = True
                         except:
-                            print('wifi id not valid')
+                            print('wifi not valid')
                             bluetooth_wifi_id=""
-
-                        try:
-                            bluetooth_wifi_pass=data['wifi_pass']
-                        except:
-                            print('wifi pass not valid')
                             bluetooth_wifi_pass=""
+                            restart_wifi=False
 
-                        # print(bluetooth_wifi_id)
+                            
                         data_json_connection = {
                             "wifi":{
                                 "id":bluetooth_wifi_id,
                                 "pass":bluetooth_wifi_pass
-                            }
+                            },
+                            "restart":restart_wifi
                         }
                         
-                        file = "database/connection.json"
-                        with open(file, 'w') as file_object:  
-                            json.dump(data_json_connection, file_object, indent=4)
+                        path_connection = "database/connection.json"
+                        store_data_json(path_connection, data_json_connection)
+
+                        # print(bluetooth_wifi_id)
 
                         ### estimasi   
                         try:
@@ -135,9 +156,8 @@ def store_data_arduino(ser):
                             }
                         }
                         
-                        file = "database/estimation.json"
-                        with open(file, 'w') as file_object:  
-                            json.dump(data_json_estimation, file_object, indent=4)
+                        path_estimation = "database/estimation.json"
+                        store_data_json(path_estimation, data_json_estimation)
                 except:
                     statusEstimation = False
                     

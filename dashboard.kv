@@ -222,7 +222,7 @@
 
                                             BoxLayout:  
                                                 Switch:
-                                                    id: switch
+                                                    id: power_switch
                                                     bg_color: rgba(57/255,255/255,20/255,1)
                                                 # Label:
                                                 #     text: 'ON' if switch.active else 'OFF'
@@ -819,6 +819,7 @@
                                             text_color: 15/255,18/255,23/255,1
                                         
                                         MDIconButton:
+                                            id: bluetooth_status
                                             icon: "bluetooth"
                                             user_font_size: "40sp"
                                             pos_hint:{"center_y": .5}
@@ -826,6 +827,7 @@
                                             text_color: 15/255,18/255,23/255,1
                                         
                                         MDIconButton:
+                                            id:turn_left
                                             icon: "arrow-left-thick"
                                             user_font_size: "40sp"
                                             pos_hint:{"center_y": .5}
@@ -833,6 +835,7 @@
                                             text_color: 15/255,18/255,23/255,1
                                         
                                         MDIconButton:
+                                            id:turn_right
                                             icon: "arrow-right-thick"
                                             user_font_size: "40sp"
                                             pos_hint:{"center_y": .5}

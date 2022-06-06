@@ -1,0 +1,10 @@
+{
+    "t":"70.00", 
+    "r":"4.50",
+    "wifi":{
+        "id":"its-wifi",
+        "pass":"surabaya"
+    },  
+    "restart":false,
+    "isRun":false
+}
